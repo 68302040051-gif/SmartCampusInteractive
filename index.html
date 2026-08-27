@@ -1307,17 +1307,16 @@ function loginAdmin() {
   }
 }
     </script>
-    <!-- ปุ่มสลับภาษาและ Admin -->
-<div class="language-switcher" style="margin: 10px 0;">
-  <button onclick="changeLanguage('th')">🇹🇭 ไทย</button>
-  <button onclick="changeLanguage('en')">🇬🇧 English</button>
-</div>
+   <!-- ปุ่มสลับภาษาและ Admin แบบลอยมุมขวาบน -->
+  <div style="position: fixed; top: 15px; right: 180px; z-index: 9999; display: flex; gap: 8px;">
+    <button onclick="changeLanguage('th')" style="padding: 6px 10px; background: #ffffff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 13px;">🇹🇭 TH</button>
+    <button onclick="changeLanguage('en')" style="padding: 6px 10px; background: #ffffff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 13px;">🇬🇧 EN</button>
+    <button onclick="loginAdmin()" style="padding: 6px 12px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;">🔑 Admin (Atcc.22)</button>
+  </div>
 
-<button onclick="loginAdmin()">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</button>
-
-<div id="admin-panel" style="display: none; margin-top: 15px; background: #f0f0f0; padding: 15px; border-radius: 8px;">
-  <h3>ยินดีต้อนรับผู้ดูแลระบบ</h3>
-  <p>คุณสามารถแก้ไขข้อมูลแผนผังและรายละเอียดห้องพักได้ที่นี่</p>
-</div>
+  <div id="admin-panel" style="display: none; position: fixed; top: 60px; right: 20px; z-index: 9999; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e5e7eb;">
+    <h3 style="margin-top: 0; font-size: 16px;">ยินดีต้อนรับผู้ดูแลระบบ</h3>
+    <p style="margin-bottom: 0; font-size: 14px; color: #4b5563;">คุณสามารถแก้ไขข้อมูลแผนผังและรายละเอียดห้องพักได้ที่นี่</p>
+  </div>
 </body>
 </html>
