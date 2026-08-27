@@ -1271,6 +1271,53 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
+        // --- โค้ด JavaScript สำหรับ Admin และ 2 ภาษา ---
+const ADMIN_PASSWORD = "Atcc.22";
+
+const translations = {
+  th: {
+    title: "ระบบแผนผังอาคาร",
+    room101: {
+      name: "ห้อง 101: ห้องประชุมใหญ่",
+      desc: "ห้องประชุมขนาดใหญ่ รองรับได้ 50 คน พร้อมอุปกรณ์มัลติมีเดียครบครัน"
+    }
+  },
+  en: {
+    title: "Building Floor Plan System",
+    room101: {
+      name: "Room 101: Main Conference Room",
+      desc: "Large conference room capacity 50 people with full multimedia equipment."
+    }
+  }
+};
+
+function changeLanguage(lang) {
+  document.getElementById('site-title').innerText = translations[lang].title;
+  document.getElementById('room-name').innerText = translations[lang].room101.name;
+  document.getElementById('room-desc').innerText = translations[lang].room101.desc;
+}
+
+function loginAdmin() {
+  const userInput = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Password):");
+  if (userInput === ADMIN_PASSWORD) {
+    alert("เข้าสู่ระบบสำเร็จ!");
+    document.getElementById('admin-panel').style.display = 'block';
+  } else if (userInput !== null) {
+    alert("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+  }
+}
     </script>
+    <!-- ปุ่มสลับภาษาและ Admin -->
+<div class="language-switcher" style="margin: 10px 0;">
+  <button onclick="changeLanguage('th')">🇹🇭 ไทย</button>
+  <button onclick="changeLanguage('en')">🇬🇧 English</button>
+</div>
+
+<button onclick="loginAdmin()">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</button>
+
+<div id="admin-panel" style="display: none; margin-top: 15px; background: #f0f0f0; padding: 15px; border-radius: 8px;">
+  <h3>ยินดีต้อนรับผู้ดูแลระบบ</h3>
+  <p>คุณสามารถแก้ไขข้อมูลแผนผังและรายละเอียดห้องพักได้ที่นี่</p>
+</div>
 </body>
 </html>
