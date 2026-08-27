@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus Interactive - วิทยาลัยเทคโนโลยีพณิชยการอยุธยา</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Kanit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Pin Pulse Animation */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.4); opacity: 0; }
+            100% { transform: scale(0.95); opacity: 0; }
+        }
+        .pin-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px;
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+
+        /* Map Pin Styles */
+        .map-pin {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .map-pin:hover {
+            transform: translate(-50%, -100%) scale(1.2) !important;
+            z-index: 40 !important;
+        }
+        .map-pin.active {
+            transform: translate(-50%, -100%) scale(1.3) !important;
+            z-index: 50 !important;
+        }
+
+        /* Campus Building Paths */
+        .campus-building-path {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .campus-building-path:hover {
+            filter: brightness(1.18) drop-shadow(0 6px 8px rgba(0,0,0,0.25));
+        }
+
+        .cat-btn.active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Hide scrollbar for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Navigation Header -->
+    <header class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-amber-400 rounded-xl flex items-center justify-center text-blue-950 font-bold text-xl shadow-md border-2 border-amber-300">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-base md:text-lg font-bold tracking-tight leading-tight">Smart Campus Interactive</h1>
+                    <p class="text-[11px] text-blue-200 font-light flex items-center gap-1">
+                        <i class="fa-solid fa-map-location-dot text-amber-400"></i> วิทยาลัยเทคโนโลยีพณิชยการอยุธยา (ATCC)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mode Switcher -->
+            <div class="flex items-center space-x-2">
+                <div class="bg-blue-950/60 p-1 rounded-xl border border-blue-700/50 flex text-xs">
+                    <button id="mode-user-btn" onclick="switchMode('user')" class="px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 bg-amber-400 text-blue-950 shadow">
+                        <i class="fa-solid fa-user-graduate mr-1"></i> ผู้ใช้งานทั่วไป
+                    </button>
+                    <button id="mode-admin-btn" onclick="switchMode('admin')" class="px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white">
+                        <i class="fa-solid fa-user-gear mr-1"></i> ผู้ดูแลระบบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filter & Information Bar -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[60px] z-30">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 no-scrollbar" id="category-filter-bar">
+                <button onclick="openRoomLogicModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>วิธีอ่านรหัสห้องเรียน</span>
+                </button>
+                <button onclick="openHowToImageModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
+                    <i class="fa-solid fa-image"></i>
+                    <span>วิธีเพิ่มรูปภาพชั้น/ตึก</span>
+                </button>
+                <div class="h-4 w-px bg-slate-300 mx-1 hidden sm:block"></div>
+                <button onclick="setCategoryFilter('all')" class="cat-btn active px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">ทั้งหมด</button>
+                <button onclick="setCategoryFilter('building')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">อาคารเรียน/ปฏิบัติการ</button>
+                <button onclick="setCategoryFilter('activity')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">ลานกิจกรรม/กีฬา</button>
+                <button onclick="setCategoryFilter('canteen')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">อาหาร/บริการ</button>
+                <button onclick="setCategoryFilter('sacred')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">สิ่งศักดิ์สิทธิ์</button>
+            </div>
+
+            <div class="text-xs text-slate-500 flex items-center gap-1 font-medium">
+                <i class="fa-solid fa-road text-amber-500"></i>
+                <span>ถ.โรจนะ ต.ไผ่ลิง อ.พระนครศรีอยุธยา</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 space-y-4">
+
+        <!-- USER VIEW -->
+        <div id="user-view" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <!-- Left Column: Interactive Map Canvas -->
+            <div class="lg:col-span-8 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
+                <div class="p-3 bg-slate-100/80 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        <h2 class="text-xs font-bold text-slate-700 uppercase tracking-wider">แผนที่ผังวิทยาลัย (Interactive ATCC Campus Layout)</h2>
+                    </div>
+                    <span class="text-[11px] text-slate-500">คลิกที่หมุดหรือตัวอาคารเพื่อดูรายละเอียด</span>
+                </div>
+
+                <!-- Map Container -->
+                <div class="relative w-full aspect-[4/3] bg-slate-900 overflow-hidden select-none" id="campus-map-wrapper">
+                    <!-- Stylized Vector Map Background of ATCC -->
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 1000 750" preserveAspectRatio="xMidYMid slice">
+                        <!-- Grass Ground -->
+                        <rect x="0" y="0" width="1000" height="750" fill="#e2e8f0"/>
+                        <path d="M 50,50 L 950,50 L 950,700 L 50,700 Z" fill="#dcfce7" stroke="#bbf7d0" stroke-width="4"/>
+
+                        <!-- Roads / Pathways -->
+                        <path d="M 700,0 L 1000,200 L 1000,280 L 650,0 Z" fill="#94a3b8"/>
+                        <text x="830" y="110" fill="#ffffff" font-size="20" font-weight="bold" transform="rotate(30 830 110)">ถนนโรจนะ ---></text>
+
+                        <!-- Main Gate Entrance Driveway -->
+                        <path d="M 800,180 L 700,250 L 680,480 L 480,480 L 480,380 L 120,380 L 120,680 L 800,680 Z" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2"/>
+                        <path d="M 680,260 L 520,260 L 520,400 L 680,400 Z" fill="#bbf7d0"/> <!-- Island Green -->
+
+                        <!-- Vector Layout Buildings -->
+                        <rect x="700" y="460" width="160" height="70" fill="#dc2626" rx="6" class="campus-building-path" onclick="selectLocation('b1')" />
+                        <text x="780" y="500" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" pointer-events="none">อาคาร 1</text>
+
+                        <rect x="520" y="240" width="300" height="80" fill="#475569" rx="6" class="campus-building-path" onclick="selectLocation('b2')" />
+                        <text x="670" y="285" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" pointer-events="none">อาคาร 2 (หลัก 5 ชั้น)</text>
+
+                        <rect x="480" y="420" width="55" height="110" fill="#db2777" rx="6" class="campus-building-path" onclick="selectLocation('b3')" />
+                        <text x="507" y="480" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" transform="rotate(-90 507 480)" pointer-events="none">อาคาร 3</text>
+
+                        <rect x="250" y="390" width="200" height="150" fill="#2563eb" rx="12" class="campus-building-path" onclick="selectLocation('dome')" />
+                        <text x="350" y="470" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle" pointer-events="none">โดมอเนกประสงค์</text>
+
+                        <rect x="460" y="410" width="15" height="40" fill="#d97706" rx="2" />
+                        <rect x="460" y="460" width="15" height="40" fill="#d97706" rx="2" />
+
+                        <rect x="100" y="420" width="45" height="170" fill="#0284c7" rx="6" class="campus-building-path" onclick="selectLocation('b4')" />
+                        <text x="122" y="505" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" transform="rotate(-90 122 505)" pointer-events="none">อาคาร 4</text>
+
+                        <rect x="30" y="450" width="55" height="170" fill="#1e3a8a" rx="6" class="campus-building-path" onclick="selectLocation('canteen')" />
+                        <text x="57" y="535" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" transform="rotate(-90 57 535)" pointer-events="none">โรงอาหาร</text>
+
+                        <rect x="230" y="240" width="260" height="70" fill="#b45309" rx="6" class="campus-building-path" onclick="selectLocation('b5')" />
+                        <text x="360" y="280" fill="#ffffff" font-size="15" font-weight="bold" text-anchor="middle" pointer-events="none">อาคาร 5 (ช่างอุตสาหกรรม)</text>
+
+                        <rect x="130" y="220" width="80" height="60" fill="#1d4ed8" rx="6" class="campus-building-path" onclick="selectLocation('b8')" />
+                        <text x="170" y="255" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" pointer-events="none">อาคาร 8</text>
+
+                        <rect x="190" y="580" width="290" height="75" fill="#059669" rx="6" class="campus-building-path" onclick="selectLocation('b6')" />
+                        <text x="335" y="625" fill="#ffffff" font-size="15" font-weight="bold" text-anchor="middle" pointer-events="none">อาคาร 6 (วิทยบริการ/พาณิชย์)</text>
+
+                        <rect x="550" y="460" width="120" height="60" fill="#4d7c0f" rx="6" class="campus-building-path" onclick="selectLocation('b7')" />
+                        <text x="610" y="495" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">อาคาร 7 (ช่างยนต์)</text>
+
+                        <circle cx="860" cy="360" r="28" fill="#eab308" class="campus-building-path" onclick="selectLocation('sacred')" />
+                        <text x="860" y="364" fill="#713f12" font-size="10" font-weight="bold" text-anchor="middle" pointer-events="none">ศาล/วิษณุ</text>
+                    </svg>
+
+                    <!-- Dynamic HTML Map Pin Overlays -->
+                    <div id="map-pins-container" class="absolute inset-0 pointer-events-none"></div>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500">
+                    💡 <span class="font-semibold text-slate-700">คำแนะนำ:</span> ท่านสามารถคลิกที่หมุดหรืออาคารบนแผนที่เพื่อเปิดดูข้อมูลห้องเรียน รายละเอียดแต่ละชั้น และรูปภาพประกอบได้ทันที
+                </div>
+            </div>
+
+            <!-- Right Column: Location Details & Quick Search -->
+            <div class="lg:col-span-4 space-y-4">
+                <!-- Selected Location Info Card -->
+                <div id="location-detail-card" class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 transition-all">
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fa-solid fa-map-location text-5xl mb-3 text-slate-300 animate-bounce"></i>
+                        <p class="text-sm font-medium">เลือกอาคารหรือสถานที่บนแผนที่<br>เพื่อดูรายละเอียด แผนกวิชา และรูปภาพประจำชั้น</p>
+                    </div>
+                </div>
+
+                <!-- Quick Location List View -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-ul text-blue-800"></i>
+                            <span>รายชื่อสถานที่ทั้งหมด</span>
+                        </h3>
+                        <span id="location-count-badge" class="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded-md text-[10px]">0 สถานที่</span>
+                    </div>
+
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="search-input" oninput="renderLocationList()" placeholder="ค้นหาชื่อตึก, แผนกวิชา, เช่น ช่างยนต์, บัญชี, คาเฟ่..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none transition">
+                    </div>
+
+                    <div id="location-quick-list" class="space-y-1.5 max-h-64 overflow-y-auto pr-1 text-xs">
+                        <!-- JS Dynamic list items -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN VIEW (Hidden by default) -->
+        <div id="admin-view" class="hidden space-y-5">
+            <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-4 border border-slate-800">
+                <div>
+                    <span class="bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider">Admin Dashboard</span>
+                    <h2 class="text-xl font-bold mt-1">ระบบจัดการข้อมูลสถานที่ & ปักหมุดพิกัดแผนที่</h2>
+                    <p class="text-xs text-slate-400 font-light mt-0.5">ท่านสามารถเพิ่ม แก้ไข ลบข้อมูลสถานที่ และคลิกปรับตำแหน่งหมุดบนผังวิทยาลัยได้</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openAddModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg transition transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>เพิ่มสถานที่ใหม่</span>
+                    </button>
+                    <button onclick="copyDataForCodeBake()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow" title="คัดลอกข้อมูลรวมรูปภาพทั้งหมดไปวางฝังในซอร์สโค้ดถาวร">
+                        <i class="fa-solid fa-code"></i> ฝังรูปถาวรลงโค้ด (Bake Data)
+                    </button>
+                    <button onclick="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-xl text-xs border border-blue-500 transition flex items-center gap-1.5" title="ดาวน์โหลดไฟล์สำรองข้อมูลลงเครื่อง">
+                        <i class="fa-solid fa-download"></i> สำรองข้อมูล (Export)
+                    </button>
+                    <label class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-2 rounded-xl text-xs border border-indigo-500 transition cursor-pointer flex items-center gap-1.5" title="นำเข้าไฟล์สำรองข้อมูล">
+                        <i class="fa-solid fa-upload"></i> นำเข้าข้อมูล (Import)
+                        <input type="file" accept=".json" class="hidden" onchange="importData(event)">
+                    </label>
+                    <button onclick="resetToDefaultData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-3 py-2 rounded-xl text-xs border border-slate-700 transition">
+                        <i class="fa-solid fa-rotate-left"></i> รีเซ็ตข้อมูล
+                    </button>
+                    <button onclick="logoutAdmin()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ Admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Map Pin Positioning Tool -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="p-3 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-arrows-up-down-left-right text-amber-600"></i>
+                        <span>เครื่องมือปรับตำแหน่งหมุด (คลิกบนแผนที่เพื่อเลือกพิกัด X/Y)</span>
+                    </h3>
+                    <span id="admin-map-status" class="text-[11px] font-semibold text-blue-700">คลิกเลือกรายการในตารางด้านล่าง แล้วคลิกบนแผนที่เพื่อย้ายหมุด</span>
+                </div>
+                <div class="relative w-full aspect-[4/3] max-h-[500px] bg-slate-900 overflow-hidden cursor-crosshair select-none" id="admin-map-container" onclick="handleAdminMapClick(event)">
+                    <!-- Map Background SVG Duplicate -->
+                    <div id="admin-map-bg" class="w-full h-full"></div>
+                    <!-- Editable Pins -->
+                    <div id="admin-pins-container" class="absolute inset-0"></div>
+                </div>
+            </div>
+
+            <!-- Admin Data Table -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800">ตารางจัดการข้อมูลอาคาร/สถานที่</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-100 text-slate-600 font-bold uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">หมวดหมู่</th>
+                                <th class="p-3">ชื่ออาคาร / สถานที่</th>
+                                <th class="p-3">จำนวนชั้น/โซน</th>
+                                <th class="p-3 text-center">พิกัด (X%, Y%)</th>
+                                <th class="p-3 text-right">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="divide-y divide-slate-200">
+                            <!-- JS Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Room Logic Guide Modal -->
+    <div id="room-logic-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-lg w-full overflow-hidden transform transition-all">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 px-6 py-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>ถอดรหัสอ่านเลขห้องเรียน ATCC</span>
+                </h3>
+                <button onclick="closeRoomLogicModal()" class="text-slate-900 hover:text-slate-700 text-xl font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-slate-700 text-sm">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                    <p class="text-xs text-amber-800 font-bold uppercase tracking-wider mb-1">ตัวอย่างรหัสห้อง</p>
+                    <div class="text-4xl font-extrabold text-blue-900 tracking-widest my-1">
+                        <span class="text-red-600" title="อาคาร 2">2</span><span class="text-emerald-600" title="ชั้น 3">3</span><span class="text-blue-600" title="ห้องที่ 6">6</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-600 mt-2">"ห้อง 236"</p>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 font-bold flex items-center justify-center shrink-0">2</span>
+                        <div>
+                            <strong class="text-slate-900">ตัวเลขแรก (เลข 2):</strong> หมายถึง <span class="font-semibold text-red-600">อาคาร 2</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0">3</span>
+                        <div>
+                            <strong class="text-slate-900">ตัวเลขที่สอง (เลข 3):</strong> หมายถึง <span class="font-semibold text-emerald-600">ชั้น 3</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center shrink-0">6</span>
+                        <div>
+                            <strong class="text-slate-900">ตัวเลขที่สาม (เลข 6):</strong> หมายถึง <span class="font-semibold text-blue-600">ลำดับห้องที่ 6</span> บนชั้นนั้น
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-3 space-y-2 text-xs text-slate-600">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-compass text-amber-500"></i> ข้อควรรู้ในการเดินหาห้อง
+                    </h4>
+                    <ul class="list-disc list-inside space-y-1.5 pl-1">
+                        <li><strong>วิธีนับลำดับห้อง:</strong> เริ่มนับเพิ่มไปทางขวามือ (รวมทั้งหมด 9 ห้อง/ชั้น)</li>
+                        <li><strong>ห้องน้ำ:</strong> อยู่บริเวณมุมซ้ายสุดของตัวอาคาร</li>
+                        <li><strong>ลิฟต์:</strong> อยู่ด้านหน้าอาคารติดกับระเบียงทางเดิน</li>
+                        <li><strong>ห้องพักครู:</strong> เช่น อาคาร 2 อยู่ห้อง 231 ติดกับห้องสัมมนา 232</li>
+                        <li><strong>⚠️ อาคาร 4 และ 8:</strong> ปัจจุบันเปิดไม่ให้ขึ้นชั้นบน เปิดให้ใช้บริการเฉพาะชั้น 1 เท่านั้น</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 flex justify-end">
+                <button onclick="closeRoomLogicModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-xl text-xs">เข้าใจแล้ว</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- How To Add Images Modal -->
+    <div id="howto-image-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-xl w-full overflow-hidden transform transition-all">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-6 py-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-camera-retro"></i>
+                    <span>วิธีการเพิ่มรูปภาพถ่ายจากมือถือ/อุปกรณ์</span>
+                </h3>
+                <button onclick="closeHowToImageModal()" class="text-slate-200 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-slate-700 text-sm">
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                    <h4 class="font-bold text-emerald-900 text-base mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <span>ถ่ายรูปหรือเลือกรูปจากมือถือได้ทันที:</span>
+                    </h4>
+                    <ol class="list-decimal list-inside text-xs space-y-2 text-slate-700 mt-2 leading-relaxed">
+                        <li>ไปที่เมนูมุมขวาบน เลือกหน้า <strong>"ผู้ดูแลระบบ" (Admin)</strong></li>
+                        <li>กดปุ่ม <strong>แก้ไข (รูปดินสอ)</strong> ตรงรายการอาคารที่ต้องการ</li>
+                        <li>ตรงแต่ละชั้นเรียน ให้กดปุ่ม <strong><i class="fa-solid fa-camera text-blue-600"></i> "เลือกรูปภาพ / ถ่ายรูป"</strong></li>
+                        <li>เลือกรูปภาพจากคลังภาพในมือถือ/คอมพิวเตอร์ หรือกดถ่ายรูปใหม่ได้ทันที</li>
+                        <li>ระบบจะบีบอัดและแสดงรูปตัวอย่างขึ้นมา จากนั้นกด <strong>"บันทึกข้อมูล"</strong> เป็นอันเสร็จสิ้น!</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 flex justify-end">
+                <button onclick="closeHowToImageModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-medium rounded-xl text-xs">รับทราบ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Preview Modal -->
+    <div id="image-lightbox-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden" onclick="closeLightboxModal()">
+        <div class="relative max-w-4xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700" onclick="event.stopPropagation()">
+            <div class="p-4 bg-slate-900/90 text-white flex justify-between items-center border-b border-slate-800">
+                <h4 id="lightbox-title" class="text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-image text-emerald-400"></i>
+                    <span>รูปภาพประกอบ</span>
+                </h4>
+                <button onclick="closeLightboxModal()" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-2 flex items-center justify-center bg-black/40 min-h-[300px]">
+                <img id="lightbox-img" src="" alt="Floor Preview" class="max-h-[75vh] w-auto object-contain rounded-lg">
+            </div>
+            <div class="p-3 bg-slate-900 text-xs text-slate-300 text-center border-t border-slate-800" id="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Location Modal (Admin) -->
+    <div id="location-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-2xl w-full overflow-hidden transform transition-all max-h-[90vh] flex flex-col">
+            <div class="bg-blue-900 text-white px-6 py-4 flex items-center justify-between">
+                <h3 id="modal-title" class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>แก้ไขข้อมูลสถานที่</span>
+                </h3>
+                <button onclick="closeModal()" class="text-slate-300 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="location-form" onsubmit="saveLocationForm(event)" class="p-6 overflow-y-auto space-y-4 flex-1">
+                <input type="hidden" id="form-id">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อสถานที่ / อาคาร</label>
+                        <input type="text" id="form-title" required placeholder="เช่น อาคาร 2 (อาคารหลัก 5 ชั้น)" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">หมวดหมู่</label>
+                        <select id="form-category" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
+                            <option value="building">อาคารเรียน / ปฏิบัติการ</option>
+                            <option value="activity">ลานกิจกรรม / กีฬา</option>
+                            <option value="canteen">อาหาร / บริการ</option>
+                            <option value="sacred">สิ่งศักดิ์สิทธิ์</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">สีหมุด (Color)</label>
+                        <select id="form-color" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none bg-white">
+                            <option value="bg-red-600">สีแดง (Red)</option>
+                            <option value="bg-slate-600">สีเทา (Slate)</option>
+                            <option value="bg-pink-600">สีชมพู (Pink)</option>
+                            <option value="bg-sky-600">สีฟ้า (Sky)</option>
+                            <option value="bg-amber-700">สีน้ำตาล/ส้ม (Amber)</option>
+                            <option value="bg-emerald-600">สีเขียว (Emerald)</option>
+                            <option value="bg-blue-600">สีน้ำเงิน (Blue)</option>
+                            <option value="bg-yellow-500">สีเหลือง (Yellow)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">พิกัด X (%) บนแผนที่</label>
+                        <input type="number" step="0.1" id="form-x" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">พิกัด Y (%) บนแผนที่</label>
+                        <input type="number" step="0.1" id="form-y" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">คำอธิบายภาพรวมสถานที่</label>
+                    <textarea id="form-desc" rows="2" placeholder="อธิบายรายละเอียดของอาคารหรือสถานที่นี้..." class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none"></textarea>
+                </div>
+
+                <!-- Floors dynamic list builder -->
+                <div class="border-t border-slate-200 pt-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">รายละเอียดแต่ละชั้น / โซน</h4>
+                        <button type="button" onclick="addFloorFormRow()" class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-plus mr-1"></i> เพิ่มชั้น/โซน
+                        </button>
+                    </div>
+
+                    <div id="floors-form-container" class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                        <!-- Dynamic Floor Rows -->
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-4 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-100 transition">ยกเลิก</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // Default Pre-populated ATCC Campus Data with fixed image URLs
+        const DEFAULT_CAMPUS_DATA = [
+            {
+                id: 'sacred',
+                title: 'ศาลพระภูมิ / พระวิษณุกรรม',
+                category: 'sacred',
+                color: 'bg-yellow-500',
+                x: 86,
+                y: 48,
+                description: 'สิ่งศักดิ์สิทธิ์ประจำวิทยาลัยเทคโนโลยีพณิชยการอยุธยา ศูนย์รวมจิตใจของคณะผู้บริหาร ครู อาจารย์ และนักศึกษา',
+                floors: [
+                    {
+                        floorName: 'บริเวณลานประดิษฐานองค์พระวิษณุกรรม',
+                        description: 'สถานที่สักการะบูชาสิ่งศักดิ์สิทธิ์ก่อนเข้าเรียนและทำกิจกรรม',
+                        image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'dome',
+                title: 'โดมอเนกประสงค์ ATCC',
+                category: 'activity',
+                color: 'bg-sky-600',
+                x: 35,
+                y: 62,
+                description: 'ลานกิจกรรมร่มขนาดใหญ่ สำหรับเข้าแถวเคารพธงชาติ แข่งขันกีฬา',
+                floors: [
+                    {
+                        floorName: 'ลานอเนกประสงค์ & สนามกีฬา',
+                        description: 'รองรับการจัดกิจกรรมทุกประเภท การเข้าแถวตอนเช้า และแข่งขันกีฬาภายใน',
+                        image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b1',
+                title: 'อาคาร 1 (ตึกอำนวยการ)',
+                category: 'building',
+                color: 'bg-red-600',
+                x: 78,
+                y: 65,
+                description: 'อาคารบริหารและสำนักงานวิทยาลัย Contact Point หลักสำหรับนักศึกษาใหม่และบุคคลภายนอก',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ห้องบริการนักศึกษา & งานทะเบียน',
+                        description: 'ติดต่อทำบัตรนักศึกษา เอกสารรับรอง',
+                        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b2',
+                title: 'อาคาร 2 (อาคารเรียนหลัก 5 ชั้น)',
+                category: 'building',
+                color: 'bg-slate-600',
+                x: 67,
+                y: 37,
+                description: 'ศูนย์กลางการเรียนการสอน มีลิฟต์โดยสารและห้องปฏิบัติการเฉพาะทาง',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: โถงอาคาร & ทางขึ้นลิฟต์',
+                        description: 'ห้องTobe numberone โถงพักผ่อน และจุดขึ้นลิฟต์',
+                        image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80'
+                    },
+                    {
+                        floorName: 'ชั้น 2: ห้องสัมนา',
+                        description: 'ห้องเรียนปรับอากาศพร้อมโปรเจกเตอร์และสื่อมัลติมีเดีย',
+                        image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80'
+                    },
+                    {
+                        floorName: 'ชั้น 3: ห้องพักครู & ห้องเรียนแผนกคอมธุรกิจและเทคโนโลยีสารสนเทศ (ห้อง 231 - 239)',
+                        description: 'ห้องพักครูอาจารย์ประจำสาขาวิชา และห้องปฏิบัติการคอมพิวเตอร์',
+                        image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80'
+                    },
+                    {
+                        floorName: 'ชั้น 4: ห้องพักครู & ห้องเรียนแผนกภาษาต่างประเทศ  (ห้อง 241 - 249)',
+                        description: 'ห้องห้องพักครูอาจารย์ประจำสาขาวิชา และห้องเรียนภาษาต่างประเทศ',
+                        image: 'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b3',
+                title: 'อาคาร 3',
+                category: 'building',
+                color: 'bg-pink-600',
+                x: 50,
+                y: 64,
+                description: 'อาคารอำนวยการ',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ห้องประชาสัมพันธ์',
+                        description: 'ห้องประชาสสัมพันธ์, คาเฟ่ประจำวิทยาลัย, มินิมาร์ท',
+                        image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b4',
+                title: 'อาคาร 4',
+                category: 'building',
+                color: 'bg-sky-600',
+                x: 12,
+                y: 67,
+                description: 'เปิดให้บริการเฉพาะชั้น 1 สำหรับศูนย์ประสานงานรายวิชา',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ห้องพัสดุ/ห้องพยาบาล',
+                        description: 'เปิดใช้บริการเฉพาะชั้น 1',
+                        image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'canteen',
+                title: 'โรงอาหาร (ATCC Canteen)',
+                category: 'canteen',
+                color: 'bg-emerald-600',
+                x: 5,
+                y: 71,
+                description: 'ศูนย์รวมอาหาร เครื่องดื่ม สะอาด ถูกสุขอนามัย',
+                floors: [
+                    {
+                        floorName: 'โซนร้านอาหาร & เครื่องดื่ม',
+                        description: 'มีร้านค้าบริการอาหารหลากหลายประเภท และมุมที่นั่งรับประทานอาหาร',
+                        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b5',
+                title: 'อาคาร 5 (ช่างอุตสาหกรรม)',
+                category: 'building',
+                color: 'bg-amber-700',
+                x: 36,
+                y: 37,
+                description: 'อาคารปฏิบัติการแผนกช่างไฟฟ้า ช่างกลโรงงาน',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ช่างกลโรงงาน',
+                        description: 'เครื่องมือกล เครื่องกลึง และห้องพักครูประจำแผนก',
+                        image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'
+                    },
+                    {
+                        floorName: 'ชั้น 2: ช่างไฟฟ้า',
+                        description: 'เครื่องมือและบอร์ดทดลองระบบไฟฟ้ากำลังและอิเล็กทรอนิกส์',
+                        image: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b6',
+                title: 'อาคาร 6',
+                category: 'building',
+                color: 'bg-emerald-600',
+                x: 33,
+                y: 83,
+                description: 'ห้องสมุด, แผนกการตลาด, แผนกการบัญชี',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ห้องสมุด',
+                        description: 'แหล่งค้นคว้าข้อมูล หนังสือวิชาการ และพื้นที่อ่านหนังสือ',
+                        image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80'
+                    },
+                    {
+                        floorName: 'ชั้น 2: สุขศึกษาพลศึกษา',
+                        description: 'ห้องเรียน (621 - 629)',
+                        image: ''
+                    },
+                    {
+                        floorName: 'ชั้น 3: แผนกการตลาด',
+                        description: 'ห้องเรียน (631 - 639)',
+                        image: ''
+                    },
+                    {
+                        floorName: 'ชั้น 4: แผนกการบัญชี',
+                        description: 'ห้องเรียน (641 - 649)',
+                        image: ''
+                    }
+                ]
+            },
+            {
+                id: 'b7',
+                title: 'อาคาร 7 (ช่างยนต์และยานยนต์ไฟฟ้า)',
+                category: 'building',
+                color: 'bg-emerald-600',
+                x: 61,
+                y: 65,
+                description: 'โรงปฏิบัติการเทคโนโลยียานยนต์และเครื่องยนต์',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ซ่อมบำรุงและเครื่องยนต์',
+                        description: 'แท่นทดสอบเครื่องยนต์ ยานยนต์ และระบบส่งกำลัง',
+                        image: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            },
+            {
+                id: 'b8',
+                title: 'อาคาร 8',
+                category: 'building',
+                color: 'bg-blue-600',
+                x: 17,
+                y: 33,
+                description: 'เปิดให้บริการชั้น 1 สำหรับห้องปฏิบัติการอเนกประสงค์',
+                floors: [
+                    {
+                        floorName: 'ชั้น 1: ',
+                        description: 'ปิดให้บริการแล้ว',
+                        image: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80'
+                    }
+                ]
+            }
+        ];
+
+        let campusData = [];
+        let activeCategory = 'all';
+        let currentSelectedId = null;
+        let adminSelectedId = null;
+        let currentMode = 'user';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCampusData();
+            initApp();
+        });
+
+        function loadCampusData() {
+            const saved = localStorage.getItem('atcc_campus_data');
+            if (saved) {
+                try {
+                    campusData = JSON.parse(saved);
+                } catch (e) {
+                    campusData = [...DEFAULT_CAMPUS_DATA];
+                }
+            } else {
+                campusData = [...DEFAULT_CAMPUS_DATA];
+            }
+        }
+
+        function saveCampusData() {
+            localStorage.setItem('atcc_campus_data', JSON.stringify(campusData));
+        }
+
+        function initApp() {
+            renderMapPins();
+            renderLocationList();
+            renderAdminTable();
+            renderAdminPins();
+            
+            // Select default first item
+            if (campusData.length > 0) {
+                selectLocation(campusData[0].id);
+            }
+        }
+
+        function renderMapPins() {
+            const container = document.getElementById('map-pins-container');
+            container.innerHTML = '';
+
+            const filtered = activeCategory === 'all' 
+                ? campusData 
+                : campusData.filter(item => item.category === activeCategory);
+
+            filtered.forEach(item => {
+                const isSelected = item.id === currentSelectedId;
+                const pin = document.createElement('div');
+                pin.className = `map-pin absolute -translate-x-1/2 -translate-y-full flex flex-col items-center group ${isSelected ? 'active' : ''}`;
+                pin.style.left = `${item.x}%`;
+                pin.style.top = `${item.y}%`;
+                pin.onclick = (e) => {
+                    e.stopPropagation();
+                    selectLocation(item.id);
+                };
+
+                pin.innerHTML = `
+                    <div class="relative flex items-center justify-center">
+                        <span class="${item.color || 'bg-blue-600'} pin-pulse"></span>
+                        <div class="w-8 h-8 ${item.color || 'bg-blue-600'} text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white text-xs font-bold">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/90 text-white text-[10px] px-2 py-0.5 rounded shadow mt-1 whitespace-nowrap opacity-90 group-hover:opacity-100 transition">
+                        ${item.title}
+                    </div>
+                `;
+                container.appendChild(pin);
+            });
+        }
+
+        function selectLocation(id) {
+            currentSelectedId = id;
+            renderMapPins();
+            renderLocationDetailCard(id);
+        }
+
+        function renderLocationDetailCard(id) {
+            const card = document.getElementById('location-detail-card');
+            const item = campusData.find(loc => loc.id === id);
+
+            if (!item) {
+                card.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fa-solid fa-map-location text-5xl mb-3 text-slate-300"></i>
+                        <p class="text-sm font-medium">ไม่พบข้อมูลสถานที่</p>
+                    </div>`;
+                return;
+            }
+
+            const floorsHtml = (item.floors || []).map((fl, idx) => `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-layer-group text-blue-600"></i>
+                            <span>${fl.floorName || `ชั้นที่ ${idx + 1}`}</span>
+                        </h4>
+                        ${fl.image ? `
+                            <button onclick="openLightbox('${fl.image}', '${fl.floorName || ''}')" class="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
+                                <i class="fa-solid fa-expand"></i> ขยายรูป
+                            </button>
+                        ` : ''}
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${fl.description || 'ไม่มีข้อมูลรายละเอียด'}</p>
+                    ${fl.image ? `
+                        <div class="overflow-hidden rounded-lg border border-slate-200 max-h-44 cursor-pointer" onclick="openLightbox('${fl.image}', '${fl.floorName || ''}')">
+                            <img src="${fl.image}" alt="${fl.floorName}" class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                        </div>
+                    ` : `
+                        <div class="bg-slate-100 p-2 rounded-lg text-center text-[11px] text-slate-400">
+                            <i class="fa-solid fa-image-slash mr-1"></i> ยังไม่มีรูปภาพประจำชั้น
+                        </div>
+                    `}
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="space-y-4">
+                    <div class="border-b border-slate-200 pb-3">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-3 h-3 rounded-full ${item.color || 'bg-blue-600'}"></span>
+                            <span class="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600">${getCategoryLabel(item.category)}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900">${item.title}</h3>
+                        <p class="text-xs text-slate-600 mt-1">${item.description || ''}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
+                            <span>รายละเอียดประจำชั้น / โซน (${item.floors ? item.floors.length : 0})</span>
+                        </h4>
+                        <div class="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
+                            ${floorsHtml || '<p class="text-xs text-slate-400">ไม่มีข้อมูลชั้น</p>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLocationList() {
+            const listContainer = document.getElementById('location-quick-list');
+            const searchVal = (document.getElementById('search-input').value || '').toLowerCase();
+            const badge = document.getElementById('location-count-badge');
+
+            const filtered = campusData.filter(item => {
+                const matchCategory = activeCategory === 'all' || item.category === activeCategory;
+                const matchSearch = item.title.toLowerCase().includes(searchVal) || 
+                                    (item.description && item.description.toLowerCase().includes(searchVal)) ||
+                                    (item.floors && item.floors.some(f => (f.floorName + f.description).toLowerCase().includes(searchVal)));
+                return matchCategory && matchSearch;
+            });
+
+            badge.innerText = `${filtered.length} สถานที่`;
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `<p class="text-center py-4 text-slate-400">ไม่พบสถานที่ที่ค้นหา</p>`;
+                return;
+            }
+
+            listContainer.innerHTML = filtered.map(item => `
+                <button onclick="selectLocation('${item.id}')" class="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between group ${item.id === currentSelectedId ? 'bg-blue-50 border-blue-500 font-semibold' : 'bg-white'}">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="w-2.5 h-2.5 rounded-full ${item.color || 'bg-blue-600'} shrink-0"></span>
+                        <span class="truncate text-slate-800 group-hover:text-blue-900">${item.title}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-blue-600"></i>
+                </button>
+            `).join('');
+        }
+
+        function setCategoryFilter(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('#category-filter-bar .cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(`'${cat}'`)) {
+                    btn.classList.add('active');
+                }
+            });
+            renderMapPins();
+            renderLocationList();
+        }
+
+        function getCategoryLabel(cat) {
+            switch(cat) {
+                case 'building': return 'อาคารเรียน/ปฏิบัติการ';
+                case 'activity': return 'ลานกิจกรรม/กีฬา';
+                case 'canteen': return 'อาหาร/บริการ';
+                case 'sacred': return 'สิ่งศักดิ์สิทธิ์';
+                default: return 'ทั่วไป';
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const userBtn = document.getElementById('mode-user-btn');
+            const adminBtn = document.getElementById('mode-admin-btn');
+            const userView = document.getElementById('user-view');
+            const adminView = document.getElementById('admin-view');
+
+            if (mode === 'admin') {
+                userBtn.className = 'px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white';
+                adminBtn.className = 'px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 bg-amber-400 text-blue-950 shadow';
+                userView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+                renderAdminTable();
+                renderAdminPins();
+            } else {
+                adminBtn.className = 'px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white';
+                userBtn.className = 'px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 bg-amber-400 text-blue-950 shadow';
+                adminView.classList.add('hidden');
+                userView.classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            switchMode('user');
+            showToast('ออกจากระบบ Admin เรียบร้อยแล้ว');
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = campusData.map(item => `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-200 ${adminSelectedId === item.id ? 'bg-amber-50' : ''}">
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-100 text-slate-700">${getCategoryLabel(item.category)}</span>
+                    </td>
+                    <td class="p-3 font-semibold text-slate-900">${item.title}</td>
+                    <td class="p-3 text-slate-600">${item.floors ? item.floors.length : 0} ชั้น/โซน</td>
+                    <td class="p-3 text-center font-mono text-slate-600">X: ${item.x}%, Y: ${item.y}%</td>
+                    <td class="p-3 text-right space-x-1">
+                        <button onclick="selectAdminPin('${item.id}')" class="p-1.5 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg text-xs" title="เลือกเพื่อย้ายหมุด">
+                            <i class="fa-solid fa-crosshairs"></i>
+                        </button>
+                        <button onclick="openEditModal('${item.id}')" class="p-1.5 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg text-xs" title="แก้ไข">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteLocation('${item.id}')" class="p-1.5 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg text-xs" title="ลบ">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAdminPins() {
+            const bgContainer = document.getElementById('admin-map-bg');
+            const pinsContainer = document.getElementById('admin-pins-container');
+            
+            // Duplicate SVG background into admin view
+            bgContainer.innerHTML = document.querySelector('#campus-map-wrapper svg').outerHTML;
+
+            pinsContainer.innerHTML = campusData.map(item => `
+                <div class="absolute -translate-x-1/2 -translate-y-full cursor-pointer flex flex-col items-center ${adminSelectedId === item.id ? 'z-50 scale-125' : 'z-30'}" style="left:${item.x}%; top:${item.y}%;" onclick="selectAdminPin('${item.id}')">
+                    <div class="w-6 h-6 ${item.color || 'bg-blue-600'} text-white rounded-full flex items-center justify-center shadow-md border border-white text-[10px] font-bold">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectAdminPin(id) {
+            adminSelectedId = id;
+            const item = campusData.find(loc => loc.id === id);
+            const status = document.getElementById('admin-map-status');
+            if (item) {
+                status.innerText = `กำลังเลือก: ${item.title} (คลิกบนแผนที่เพื่อย้ายพิกัด)`;
+            }
+            renderAdminPins();
+            renderAdminTable();
+        }
+
+        function handleAdminMapClick(e) {
+            if (!adminSelectedId) {
+                showToast('กรุณาเลือกรายการในตารางก่อนคลิกปรับตำแหน่งหมุด', 'warning');
+                return;
+            }
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            const percentX = Math.round((clickX / rect.width) * 1000) / 10;
+            const percentY = Math.round((clickY / rect.height) * 1000) / 10;
+
+            const item = campusData.find(loc => loc.id === adminSelectedId);
+            if (item) {
+                item.x = percentX;
+                item.y = percentY;
+                saveCampusData();
+                renderAdminPins();
+                renderAdminTable();
+                renderMapPins();
+                showToast(`อัปเดตพิกัด ${item.title} เป็น X:${percentX}%, Y:${percentY}%`);
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-plus-circle"></i> <span>เพิ่มสถานที่ใหม่</span>`;
+            document.getElementById('form-id').value = '';
+            document.getElementById('form-title').value = '';
+            document.getElementById('form-category').value = 'building';
+            document.getElementById('form-color').value = 'bg-blue-600';
+            document.getElementById('form-x').value = '50';
+            document.getElementById('form-y').value = '50';
+            document.getElementById('form-desc').value = '';
+            document.getElementById('floors-form-container').innerHTML = '';
+            addFloorFormRow();
+            document.getElementById('location-modal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const item = campusData.find(loc => loc.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> <span>แก้ไขข้อมูล ${item.title}</span>`;
+            document.getElementById('form-id').value = item.id;
+            document.getElementById('form-title').value = item.title;
+            document.getElementById('form-category').value = item.category || 'building';
+            document.getElementById('form-color').value = item.color || 'bg-blue-600';
+            document.getElementById('form-x').value = item.x;
+            document.getElementById('form-y').value = item.y;
+            document.getElementById('form-desc').value = item.description || '';
+
+            const floorsContainer = document.getElementById('floors-form-container');
+            floorsContainer.innerHTML = '';
+            (item.floors || []).forEach(fl => {
+                addFloorFormRow(fl.floorName, fl.description, fl.image);
+            });
+
+            if ((item.floors || []).length === 0) {
+                addFloorFormRow();
+            }
+
+            document.getElementById('location-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('location-modal').classList.add('hidden');
+        }
+
+        function addFloorFormRow(name = '', desc = '', img = '') {
+            const container = document.getElementById('floors-form-container');
+            const rowId = 'floor-row-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4);
+            const row = document.createElement('div');
+            row.id = rowId;
+            row.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2 relative';
+            row.innerHTML = `
+                <button type="button" onclick="document.getElementById('${rowId}').remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <div>
+                    <input type="text" class="floor-name-input w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none" placeholder="ชื่อชั้น/โซน เช่น ชั้น 1: ห้องปฏิบัติการ" value="${name}">
+                </div>
+                <div>
+                    <textarea class="floor-desc-input w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none" rows="2" placeholder="คำอธิบายเพิ่มเติม">${desc}</textarea>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="text" class="floor-img-input flex-1 px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg focus:outline-none" placeholder="URL รูปภาพ หรือกดอัปโหลด" value="${img}">
+                    <label class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer shrink-0">
+                        <i class="fa-solid fa-camera mr-1"></i> เลือกรูปภาพ
+                        <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event, '${rowId}')">
+                    </label>
+                </div>
+                ${img ? `<div class="mt-1 h-20 overflow-hidden rounded border border-slate-200"><img src="${img}" class="h-full object-cover"></div>` : ''}
+            `;
+            container.appendChild(row);
+        }
+
+        function handleImageUpload(e, rowId) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const imgInput = document.querySelector(`#${rowId} .floor-img-input`);
+                if (imgInput) {
+                    imgInput.value = evt.target.result;
+                    showToast('อัปโหลดรูปภาพสำเร็จ');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveLocationForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('form-id').value || ('loc-' + Date.now());
+            const title = document.getElementById('form-title').value.trim();
+            const category = document.getElementById('form-category').value;
+            const color = document.getElementById('form-color').value;
+            const x = parseFloat(document.getElementById('form-x').value);
+            const y = parseFloat(document.getElementById('form-y').value);
+            const description = document.getElementById('form-desc').value.trim();
+
+            const floorRows = document.querySelectorAll('#floors-form-container > div');
+            const floors = [];
+            floorRows.forEach(row => {
+                const fName = row.querySelector('.floor-name-input').value.trim();
+                const fDesc = row.querySelector('.floor-desc-input').value.trim();
+                const fImg = row.querySelector('.floor-img-input').value.trim();
+                if (fName || fDesc || fImg) {
+                    floors.push({ floorName: fName, description: fDesc, image: fImg });
+                }
+            });
+
+            const index = campusData.findIndex(loc => loc.id === id);
+            const newItem = { id, title, category, color, x, y, description, floors };
+
+            if (index >= 0) {
+                campusData[index] = newItem;
+            } else {
+                campusData.push(newItem);
+            }
+
+            saveCampusData();
+            closeModal();
+            initApp();
+            showToast('บันทึกข้อมูลเรียบร้อยแล้ว');
+        }
+
+        function deleteLocation(id) {
+            if (!confirm('คุณต้องการลบสถานที่นี้ใช่หรือไม่?')) return;
+            campusData = campusData.filter(loc => loc.id !== id);
+            saveCampusData();
+            initApp();
+            showToast('ลบสถานที่เรียบร้อยแล้ว');
+        }
+
+        function copyDataForCodeBake() {
+            const jsonStr = JSON.stringify(campusData, null, 4);
+            const dummy = document.createElement('textarea');
+            dummy.value = `const DEFAULT_CAMPUS_DATA = ${jsonStr};`;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('คัดลอกซอร์สโค้ด Javascript เรียบร้อยแล้ว!');
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(campusData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `atcc_campus_backup_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('ส่งออกไฟล์สำรองข้อมูลเรียบร้อย');
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (Array.isArray(parsed)) {
+                        campusData = parsed;
+                        saveCampusData();
+                        initApp();
+                        showToast('นำเข้าข้อมูลสำเร็จ');
+                    } else {
+                        showToast('รูปแบบไฟล์ JSON ไม่ถูกต้อง', 'error');
+                    }
+                } catch(err) {
+                    showToast('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefaultData() {
+            if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ตข้อมูลกลับเป็นค่าเริ่มต้น?')) return;
+            campusData = [...DEFAULT_CAMPUS_DATA];
+            saveCampusData();
+            initApp();
+            showToast('รีเซ็ตข้อมูลกลับสู่ค่าเริ่มต้นแล้ว');
+        }
+
+        function openRoomLogicModal() {
+            document.getElementById('room-logic-modal').classList.remove('hidden');
+        }
+        function closeRoomLogicModal() {
+            document.getElementById('room-logic-modal').classList.add('hidden');
+        }
+
+        function openHowToImageModal() {
+            document.getElementById('howto-image-modal').classList.remove('hidden');
+        }
+        function closeHowToImageModal() {
+            document.getElementById('howto-image-modal').classList.add('hidden');
+        }
+
+        function openLightbox(imgUrl, caption) {
+            document.getElementById('lightbox-img').src = imgUrl;
+            document.getElementById('lightbox-caption').innerText = caption;
+            document.getElementById('image-lightbox-modal').classList.remove('hidden');
+        }
+        function closeLightboxModal() {
+            document.getElementById('image-lightbox-modal').classList.add('hidden');
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bg = type === 'error' ? 'bg-red-600' : type === 'warning' ? 'bg-amber-600' : 'bg-slate-900';
+            toast.className = `${bg} text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> <span>${msg}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
