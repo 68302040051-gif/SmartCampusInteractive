@@ -1297,26 +1297,36 @@ function changeLanguage(lang) {
   document.getElementById('room-desc').innerText = translations[lang].room101.desc;
 }
 
-function loginAdmin() {
-  const userInput = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Password):");
-  if (userInput === ADMIN_PASSWORD) {
-    alert("เข้าสู่ระบบสำเร็จ!");
-    document.getElementById('admin-panel').style.display = 'block';
-  } else if (userInput !== null) {
-    alert("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
-  }
-}
-    </script>
-   <!-- ปุ่มสลับภาษาและ Admin แบบลอยมุมขวาบน -->
-  <div style="position: fixed; top: 15px; right: 180px; z-index: 9999; display: flex; gap: 8px;">
-    <button onclick="changeLanguage('th')" style="padding: 6px 10px; background: #ffffff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 13px;">🇹🇭 TH</button>
-    <button onclick="changeLanguage('en')" style="padding: 6px 10px; background: #ffffff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 13px;">🇬🇧 EN</button>
-    <button onclick="loginAdmin()" style="padding: 6px 12px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;">🔑 Admin (Atcc.22)</button>
-  </div>
+function setLang(lang) {
+      if (typeof currentLang !== 'undefined') {
+        currentLang = lang;
+        if (typeof updateLanguageUI === 'function') updateLanguageUI();
+        if (typeof renderLocations === 'function') renderLocations();
+      } else {
+        alert('เปลี่ยนภาษาเป็น: ' + lang.toUpperCase());
+      }
+    }
 
-  <div id="admin-panel" style="display: none; position: fixed; top: 60px; right: 20px; z-index: 9999; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #e5e7eb;">
-    <h3 style="margin-top: 0; font-size: 16px;">ยินดีต้อนรับผู้ดูแลระบบ</h3>
-    <p style="margin-bottom: 0; font-size: 14px; color: #4b5563;">คุณสามารถแก้ไขข้อมูลแผนผังและรายละเอียดห้องพักได้ที่นี่</p>
+    function openAdminLoginModal() {
+      const modal = document.getElementById('location-modal') || document.getElementById('admin-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+      } else {
+        const pass = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Password):");
+        if (pass === "Atcc.22") {
+          alert("เข้าสู่ระบบสำเร็จ!");
+        } else if (pass !== null) {
+          alert("รหัสผ่านไม่ถูกต้อง");
+        }
+      }
+    }
+  </script>
+
+  <!-- ปุ่มสลับภาษาและ Admin ลอยด้านขวาบน -->
+  <div style="position: fixed; top: 12px; right: 12px; z-index: 9999; display: flex; gap: 6px; align-items: center; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+    <button onclick="setLang('th')" style="padding: 4px 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🇹🇭 TH</button>
+    <button onclick="setLang('en')" style="padding: 4px 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🇬🇧 EN</button>
+    <button onclick="openAdminLoginModal()" style="padding: 5px 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🔑 ผู้ดูแลระบบ</button>
   </div>
 </body>
 </html>
