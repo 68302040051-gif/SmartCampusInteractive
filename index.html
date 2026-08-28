@@ -800,18 +800,34 @@
             initApp();
         });
 
-        function loadCampusData() {
-            const saved = localStorage.getItem('atcc_campus_data');
-            if (saved) {
-                try {
-                    campusData = JSON.parse(saved);
-                } catch (e) {
-                    campusData = [...DEFAULT_CAMPUS_DATA];
-                }
-            } else {
-                campusData = [...DEFAULT_CAMPUS_DATA];
-            }
-        }
+        async function loadCampusData() {
+  const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBJM6nyWaMD_L36w1MO46qVFojGM0SYUIPa1JfMdn32v0IUJkEJExdx7iGe2N2nmbCP5HEGYjngDkZ/pub?gid=0&single=true&output=csv';
+
+  try {
+    const response = await fetch(SHEET_URL);
+    const csvText = await response.text();
+    
+    // แปลง CSV เป็น Array ข้อมูล
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    
+    campusData = lines.slice(1).map(line => {
+      const values = line.split(',').map(v => v.trim());
+      let obj = {};
+      headers.forEach((header, i) => {
+        obj[header] = values[i] || '';
+      });
+      return obj;
+    });
+
+    // แสดงผลข้อมูลใหม่บนเว็บทันที
+    initApp();
+  } catch (error) {
+    console.error('Error loading sheet data:', error);
+    campusData = [...DEFAULT_CAMPUS_DATA];
+    initApp();
+  }
+}
 
         function saveCampusData() {
             localStorage.setItem('atcc_campus_data', JSON.stringify(campusData));
