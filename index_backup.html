@@ -106,22 +106,14 @@
                 </div>
             </div>
 
-            <!-- Mode + Language Switcher -->
+            <!-- Mode Switcher -->
             <div class="flex items-center space-x-2">
                 <div class="bg-blue-950/60 p-1 rounded-xl border border-blue-700/50 flex text-xs">
-                    <button id="lang-th-btn" onclick="setLanguage('th')" class="px-2.5 py-1 rounded-lg font-bold transition-all duration-200 bg-amber-400 text-blue-950 shadow">
-                        🇹🇭 TH
-                    </button>
-                    <button id="lang-en-btn" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white">
-                        🇬🇧 EN
-                    </button>
-                </div>
-                <div class="bg-blue-950/60 p-1 rounded-xl border border-blue-700/50 flex text-xs">
                     <button id="mode-user-btn" onclick="switchMode('user')" class="px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 bg-amber-400 text-blue-950 shadow">
-                        <i class="fa-solid fa-user-graduate mr-1"></i> <span data-i18n="modeUser">ผู้ใช้งานทั่วไป</span>
+                        <i class="fa-solid fa-user-graduate mr-1"></i> ผู้ใช้งานทั่วไป
                     </button>
-                    <button id="mode-admin-btn" onclick="requestAdminAccess()" class="px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white">
-                        <i class="fa-solid fa-user-gear mr-1"></i> <span data-i18n="modeAdmin">ผู้ดูแลระบบ</span>
+                    <button id="mode-admin-btn" onclick="switchMode('admin')" class="px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white">
+                        <i class="fa-solid fa-user-gear mr-1"></i> ผู้ดูแลระบบ
                     </button>
                 </div>
             </div>
@@ -134,23 +126,23 @@
             <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 no-scrollbar" id="category-filter-bar">
                 <button onclick="openRoomLogicModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
                     <i class="fa-solid fa-circle-info"></i>
-                    <span data-i18n="btnRoomLogic">วิธีอ่านรหัสห้องเรียน</span>
+                    <span>วิธีอ่านรหัสห้องเรียน</span>
                 </button>
                 <button onclick="openHowToImageModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
                     <i class="fa-solid fa-image"></i>
-                    <span data-i18n="btnHowToImage">วิธีเพิ่มรูปภาพชั้น/ตึก</span>
+                    <span>วิธีเพิ่มรูปภาพชั้น/ตึก</span>
                 </button>
                 <div class="h-4 w-px bg-slate-300 mx-1 hidden sm:block"></div>
-                <button onclick="setCategoryFilter('all')" class="cat-btn active px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition" data-i18n="catAll">ทั้งหมด</button>
-                <button onclick="setCategoryFilter('building')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition" data-i18n="catBuilding">อาคารเรียน/ปฏิบัติการ</button>
-                <button onclick="setCategoryFilter('activity')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition" data-i18n="catActivity">ลานกิจกรรม/กีฬา</button>
-                <button onclick="setCategoryFilter('canteen')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition" data-i18n="catCanteen">อาหาร/บริการ</button>
-                <button onclick="setCategoryFilter('sacred')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition" data-i18n="catSacred">สิ่งศักดิ์สิทธิ์</button>
+                <button onclick="setCategoryFilter('all')" class="cat-btn active px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">ทั้งหมด</button>
+                <button onclick="setCategoryFilter('building')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">อาคารเรียน/ปฏิบัติการ</button>
+                <button onclick="setCategoryFilter('activity')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">ลานกิจกรรม/กีฬา</button>
+                <button onclick="setCategoryFilter('canteen')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">อาหาร/บริการ</button>
+                <button onclick="setCategoryFilter('sacred')" class="cat-btn bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition">สิ่งศักดิ์สิทธิ์</button>
             </div>
 
             <div class="text-xs text-slate-500 flex items-center gap-1 font-medium">
                 <i class="fa-solid fa-road text-amber-500"></i>
-                <span data-i18n="addressText">ถ.โรจนะ ต.ไผ่ลิง อ.พระนครศรีอยุธยา</span>
+                <span>ถ.โรจนะ ต.ไผ่ลิง อ.พระนครศรีอยุธยา</span>
             </div>
         </div>
     </nav>
@@ -165,9 +157,9 @@
                 <div class="p-3 bg-slate-100/80 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                        <h2 class="text-xs font-bold text-slate-700 uppercase tracking-wider" data-i18n="mapTitle">แผนที่ผังวิทยาลัย (Interactive ATCC Campus Layout)</h2>
+                        <h2 class="text-xs font-bold text-slate-700 uppercase tracking-wider">แผนที่ผังวิทยาลัย (Interactive ATCC Campus Layout)</h2>
                     </div>
-                    <span class="text-[11px] text-slate-500" data-i18n="mapSubtitle">คลิกที่หมุดหรือตัวอาคารเพื่อดูรายละเอียด</span>
+                    <span class="text-[11px] text-slate-500">คลิกที่หมุดหรือตัวอาคารเพื่อดูรายละเอียด</span>
                 </div>
 
                 <!-- Map Container -->
@@ -229,7 +221,7 @@
                 </div>
 
                 <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500">
-                    💡 <span class="font-semibold text-slate-700" data-i18n="guideLabel">คำแนะนำ:</span> <span data-i18n="mapGuideText">ท่านสามารถคลิกที่หมุดหรืออาคารบนแผนที่เพื่อเปิดดูข้อมูลห้องเรียน รายละเอียดแต่ละชั้น และรูปภาพประกอบได้ทันที</span>
+                    💡 <span class="font-semibold text-slate-700">คำแนะนำ:</span> ท่านสามารถคลิกที่หมุดหรืออาคารบนแผนที่เพื่อเปิดดูข้อมูลห้องเรียน รายละเอียดแต่ละชั้น และรูปภาพประกอบได้ทันที
                 </div>
             </div>
 
@@ -239,7 +231,7 @@
                 <div id="location-detail-card" class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 transition-all">
                     <div class="text-center py-8 text-slate-400">
                         <i class="fa-solid fa-map-location text-5xl mb-3 text-slate-300 animate-bounce"></i>
-                        <p class="text-sm font-medium" data-i18n="noLocationSelected">เลือกอาคารหรือสถานที่บนแผนที่<br>เพื่อดูรายละเอียด แผนกวิชา และรูปภาพประจำชั้น</p>
+                        <p class="text-sm font-medium">เลือกอาคารหรือสถานที่บนแผนที่<br>เพื่อดูรายละเอียด แผนกวิชา และรูปภาพประจำชั้น</p>
                     </div>
                 </div>
 
@@ -248,14 +240,14 @@
                     <div class="flex items-center justify-between">
                         <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-list-ul text-blue-800"></i>
-                            <span data-i18n="allLocations">รายชื่อสถานที่ทั้งหมด</span>
+                            <span>รายชื่อสถานที่ทั้งหมด</span>
                         </h3>
                         <span id="location-count-badge" class="bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded-md text-[10px]">0 สถานที่</span>
                     </div>
 
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="search-input" oninput="renderLocationList()" placeholder="ค้นหาชื่อตึก, แผนกวิชา, เช่น ช่างยนต์, บัญชี, คาเฟ่..." data-i18n-placeholder="searchPlaceholder" class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none transition">
+                        <input type="text" id="search-input" oninput="renderLocationList()" placeholder="ค้นหาชื่อตึก, แผนกวิชา, เช่น ช่างยนต์, บัญชี, คาเฟ่..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none transition">
                     </div>
 
                     <div id="location-quick-list" class="space-y-1.5 max-h-64 overflow-y-auto pr-1 text-xs">
@@ -270,29 +262,29 @@
             <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-4 border border-slate-800">
                 <div>
                     <span class="bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider">Admin Dashboard</span>
-                    <h2 class="text-xl font-bold mt-1" data-i18n="adminHeaderTitle">ระบบจัดการข้อมูลสถานที่ & ปักหมุดพิกัดแผนที่</h2>
-                    <p class="text-xs text-slate-400 font-light mt-0.5" data-i18n="adminHeaderDesc">ท่านสามารถเพิ่ม แก้ไข ลบข้อมูลสถานที่ และคลิกปรับตำแหน่งหมุดบนผังวิทยาลัยได้</p>
+                    <h2 class="text-xl font-bold mt-1">ระบบจัดการข้อมูลสถานที่ & ปักหมุดพิกัดแผนที่</h2>
+                    <p class="text-xs text-slate-400 font-light mt-0.5">ท่านสามารถเพิ่ม แก้ไข ลบข้อมูลสถานที่ และคลิกปรับตำแหน่งหมุดบนผังวิทยาลัยได้</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="openAddModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg transition transform hover:-translate-y-0.5">
                         <i class="fa-solid fa-plus-circle"></i>
-                        <span data-i18n="btnAddLocation">เพิ่มสถานที่ใหม่</span>
+                        <span>เพิ่มสถานที่ใหม่</span>
                     </button>
                     <button onclick="copyDataForCodeBake()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow" title="คัดลอกข้อมูลรวมรูปภาพทั้งหมดไปวางฝังในซอร์สโค้ดถาวร">
-                        <i class="fa-solid fa-code"></i> <span data-i18n="btnBakeData">ฝังรูปถาวรลงโค้ด (Bake Data)</span>
+                        <i class="fa-solid fa-code"></i> ฝังรูปถาวรลงโค้ด (Bake Data)
                     </button>
                     <button onclick="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-xl text-xs border border-blue-500 transition flex items-center gap-1.5" title="ดาวน์โหลดไฟล์สำรองข้อมูลลงเครื่อง">
-                        <i class="fa-solid fa-download"></i> <span data-i18n="btnBackup">สำรองข้อมูล (Export)</span>
+                        <i class="fa-solid fa-download"></i> สำรองข้อมูล (Export)
                     </button>
                     <label class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-2 rounded-xl text-xs border border-indigo-500 transition cursor-pointer flex items-center gap-1.5" title="นำเข้าไฟล์สำรองข้อมูล">
-                        <i class="fa-solid fa-upload"></i> <span data-i18n="btnImport">นำเข้าข้อมูล (Import)</span>
+                        <i class="fa-solid fa-upload"></i> นำเข้าข้อมูล (Import)
                         <input type="file" accept=".json" class="hidden" onchange="importData(event)">
                     </label>
                     <button onclick="resetToDefaultData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-3 py-2 rounded-xl text-xs border border-slate-700 transition">
-                        <i class="fa-solid fa-rotate-left"></i> <span data-i18n="btnReset">รีเซ็ตข้อมูล</span>
+                        <i class="fa-solid fa-rotate-left"></i> รีเซ็ตข้อมูล
                     </button>
                     <button onclick="logoutAdmin()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="btnLogout">ออกจากระบบ Admin</span>
+                        <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ Admin
                     </button>
                 </div>
             </div>
@@ -302,9 +294,9 @@
                 <div class="p-3 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
                     <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-arrows-up-down-left-right text-amber-600"></i>
-                        <span><span data-i18n="adminMapHeader">เครื่องมือปรับตำแหน่งหมุด (คลิกบนแผนที่เพื่อเลือกพิกัด X/Y)</span></span>
+                        <span>เครื่องมือปรับตำแหน่งหมุด (คลิกบนแผนที่เพื่อเลือกพิกัด X/Y)</span>
                     </h3>
-                    <span id="admin-map-status" class="text-[11px] font-semibold text-blue-700"><span data-i18n="adminMapStatusDefault">คลิกเลือกรายการในตารางด้านล่าง แล้วคลิกบนแผนที่เพื่อย้ายหมุด</span></span>
+                    <span id="admin-map-status" class="text-[11px] font-semibold text-blue-700">คลิกเลือกรายการในตารางด้านล่าง แล้วคลิกบนแผนที่เพื่อย้ายหมุด</span>
                 </div>
                 <div class="relative w-full aspect-[4/3] max-h-[500px] bg-slate-900 overflow-hidden cursor-crosshair select-none" id="admin-map-container" onclick="handleAdminMapClick(event)">
                     <!-- Map Background SVG Duplicate -->
@@ -317,7 +309,7 @@
             <!-- Admin Data Table -->
             <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
                 <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-slate-800" data-i18n="adminTableTitle">ตารางจัดการข้อมูลอาคาร/สถานที่</h3>
+                    <h3 class="text-sm font-bold text-slate-800">ตารางจัดการข้อมูลอาคาร/สถานที่</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-xs text-left">
@@ -440,7 +432,7 @@
             <div class="p-4 bg-slate-900/90 text-white flex justify-between items-center border-b border-slate-800">
                 <h4 id="lightbox-title" class="text-sm font-bold flex items-center gap-2">
                     <i class="fa-solid fa-image text-emerald-400"></i>
-                    <span data-i18n="imageTitle">รูปภาพประกอบ</span>
+                    <span>รูปภาพประกอบ</span>
                 </h4>
                 <button onclick="closeLightboxModal()" class="text-slate-400 hover:text-white text-xl">
                     <i class="fa-solid fa-xmark"></i>
@@ -450,38 +442,6 @@
                 <img id="lightbox-img" src="" alt="Floor Preview" class="max-h-[75vh] w-auto object-contain rounded-lg">
             </div>
             <div class="p-3 bg-slate-900 text-xs text-slate-300 text-center border-t border-slate-800" id="lightbox-caption"></div>
-        </div>
-    </div>
-
-    <!-- Admin Password Authentication Modal -->
-    <div id="admin-auth-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this) closeAdminAuthModal()">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-sm w-full overflow-hidden">
-            <div class="bg-blue-950 text-white px-6 py-4 flex items-center justify-between border-b border-blue-900">
-                <h3 class="font-bold text-base flex items-center gap-2 text-amber-400">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span data-i18n="adminAuthTitle">ยืนยันตัวตนผู้ดูแลระบบ</span>
-                </h3>
-                <button type="button" onclick="closeAdminAuthModal()" class="text-slate-300 hover:text-white text-xl" aria-label="Close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <form onsubmit="submitAdminAuth(event)" class="p-6 space-y-4">
-                <p class="text-xs text-slate-600" data-i18n="adminAuthDesc">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบจัดการข้อมูล</p>
-                <div>
-                    <label for="admin-password-input" class="block text-xs font-bold text-slate-700 mb-1" data-i18n="adminPasswordLabel">รหัสผ่านผู้ดูแลระบบ</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-lock absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input id="admin-password-input" type="password" autocomplete="current-password" class="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="กรอกรหัสผ่าน" data-i18n-placeholder="adminPasswordPlaceholder" required>
-                    </div>
-                    <p id="admin-login-error" class="hidden text-xs text-red-600 mt-2 font-semibold"></p>
-                </div>
-                <div class="flex justify-end gap-2 pt-1">
-                    <button type="button" onclick="closeAdminAuthModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs" data-i18n="adminCancel">ยกเลิก</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="adminLogin">เข้าสู่ระบบ</span>
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -891,18 +851,18 @@
                         </h4>
                         ${fl.image ? `
                             <button onclick="openLightbox('${fl.image}', '${fl.floorName || ''}')" class="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
-                                <i class="fa-solid fa-expand"></i> ${t('expandImage', 'ขยายรูป')}
+                                <i class="fa-solid fa-expand"></i> ขยายรูป
                             </button>
                         ` : ''}
                     </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">${fl.description || t('noDescription', 'ไม่มีข้อมูลรายละเอียด')}</p>
+                    <p class="text-xs text-slate-600 leading-relaxed">${fl.description || 'ไม่มีข้อมูลรายละเอียด'}</p>
                     ${fl.image ? `
                         <div class="overflow-hidden rounded-lg border border-slate-200 max-h-44 cursor-pointer" onclick="openLightbox('${fl.image}', '${fl.floorName || ''}')">
                             <img src="${fl.image}" alt="${fl.floorName}" class="w-full h-full object-cover hover:scale-105 transition duration-300">
                         </div>
                     ` : `
                         <div class="bg-slate-100 p-2 rounded-lg text-center text-[11px] text-slate-400">
-                            <i class="fa-solid fa-image-slash mr-1"></i> ${t('noImage', 'ยังไม่มีรูปภาพประจำชั้น')}
+                            <i class="fa-solid fa-image-slash mr-1"></i> ยังไม่มีรูปภาพประจำชั้น
                         </div>
                     `}
                 </div>
@@ -921,10 +881,10 @@
 
                     <div class="space-y-3">
                         <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
-                            <span>${t('floorDetails', 'รายละเอียดประจำชั้น / โซน')} (${item.floors ? item.floors.length : 0})</span>
+                            <span>รายละเอียดประจำชั้น / โซน (${item.floors ? item.floors.length : 0})</span>
                         </h4>
                         <div class="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
-                            ${floorsHtml || `<p class="text-xs text-slate-400">${t('noFloor', 'ไม่มีข้อมูลชั้น')}</p>`}
+                            ${floorsHtml || '<p class="text-xs text-slate-400">ไม่มีข้อมูลชั้น</p>'}
                         </div>
                     </div>
                 </div>
@@ -944,10 +904,10 @@
                 return matchCategory && matchSearch;
             });
 
-            badge.innerText = `${filtered.length} ${t('locationCount', 'สถานที่')}`;
+            badge.innerText = `${filtered.length} สถานที่`;
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = `<p class="text-center py-4 text-slate-400">${t('noSearch', 'ไม่พบสถานที่ที่ค้นหา')}</p>`;
+                listContainer.innerHTML = `<p class="text-center py-4 text-slate-400">ไม่พบสถานที่ที่ค้นหา</p>`;
                 return;
             }
 
@@ -976,11 +936,11 @@
 
         function getCategoryLabel(cat) {
             switch(cat) {
-                case 'building': return t('categoryBuilding', 'อาคารเรียน/ปฏิบัติการ');
-                case 'activity': return t('categoryActivity', 'ลานกิจกรรม/กีฬา');
-                case 'canteen': return t('categoryCanteen', 'อาหาร/บริการ');
-                case 'sacred': return t('categorySacred', 'สิ่งศักดิ์สิทธิ์');
-                default: return t('categoryOther', 'ทั่วไป');
+                case 'building': return 'อาคารเรียน/ปฏิบัติการ';
+                case 'activity': return 'ลานกิจกรรม/กีฬา';
+                case 'canteen': return 'อาหาร/บริการ';
+                case 'sacred': return 'สิ่งศักดิ์สิทธิ์';
+                default: return 'ทั่วไป';
             }
         }
 
@@ -1311,175 +1271,62 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-        // ============================================================
-        // Language + Admin Authentication
-        // ============================================================
-        const ADMIN_PASSWORD = "Atcc.22";
-        let currentLang = localStorage.getItem('atcc_language') || 'th';
+        // --- โค้ด JavaScript สำหรับ Admin และ 2 ภาษา ---
+const ADMIN_PASSWORD = "Atcc.22";
 
-        const TRANSLATIONS = {
-            th: {
-                modeUser: 'ผู้ใช้งานทั่วไป', modeAdmin: 'ผู้ดูแลระบบ',
-                btnRoomLogic: 'วิธีอ่านรหัสห้องเรียน', btnHowToImage: 'วิธีเพิ่มรูปภาพชั้น/ตึก',
-                catAll: 'ทั้งหมด', catBuilding: 'อาคารเรียน/ปฏิบัติการ', catActivity: 'ลานกิจกรรม/กีฬา',
-                catCanteen: 'อาหาร/บริการ', catSacred: 'สิ่งศักดิ์สิทธิ์',
-                addressText: 'ถ.โรจนะ ต.ไผ่ลิง อ.พระนครศรีอยุธยา',
-                mapTitle: 'แผนที่ผังวิทยาลัย (Interactive ATCC Campus Layout)',
-                mapSubtitle: 'คลิกที่หมุดหรือตัวอาคารเพื่อดูรายละเอียด',
-                guideLabel: 'คำแนะนำ:',
-                mapGuideText: 'ท่านสามารถคลิกที่หมุดหรืออาคารบนแผนที่เพื่อเปิดดูข้อมูลห้องเรียน รายละเอียดแต่ละชั้น และรูปภาพประกอบได้ทันที',
-                noLocationSelected: 'เลือกอาคารหรือสถานที่บนแผนที่<br>เพื่อดูรายละเอียด แผนกวิชา และรูปภาพประจำชั้น',
-                allLocations: 'รายชื่อสถานที่ทั้งหมด',
-                adminHeaderTitle: 'ระบบจัดการข้อมูลสถานที่ & ปักหมุดพิกัดแผนที่',
-                adminHeaderDesc: 'ท่านสามารถเพิ่ม แก้ไข ลบข้อมูลสถานที่ และคลิกปรับตำแหน่งหมุดบนผังวิทยาลัยได้',
-                btnAddLocation: 'เพิ่มสถานที่ใหม่', btnBakeData: 'ฝังรูปถาวรลงโค้ด (Bake Data)',
-                btnBackup: 'สำรองข้อมูล (Export)', btnImport: 'นำเข้าข้อมูล (Import)', btnReset: 'รีเซ็ตข้อมูล',
-                btnLogout: 'ออกจากระบบ Admin', adminMapHeader: 'เครื่องมือปรับตำแหน่งหมุด (คลิกบนแผนที่เพื่อเลือกพิกัด X/Y)',
-                adminMapStatusDefault: 'คลิกเลือกรายการในตารางด้านล่าง แล้วคลิกบนแผนที่เพื่อย้ายหมุด',
-                adminTableTitle: 'ตารางจัดการข้อมูลอาคาร/สถานที่', colCategory: 'หมวดหมู่', colTitle: 'ชื่ออาคาร / สถานที่',
-                colFloors: 'จำนวนชั้น/โซน', colCoords: 'พิกัด (X%, Y%)', colManage: 'การจัดการ',
-                adminAuthTitle: 'ยืนยันตัวตนผู้ดูแลระบบ', adminAuthDesc: 'กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบจัดการข้อมูล',
-                adminPasswordLabel: 'รหัสผ่านผู้ดูแลระบบ', adminPasswordPlaceholder: 'กรอกรหัสผ่าน',
-                adminCancel: 'ยกเลิก', adminLogin: 'เข้าสู่ระบบ', loginSuccess: 'เข้าสู่ระบบ Admin สำเร็จ',
-                loginFail: 'รหัสผ่านไม่ถูกต้อง', logoutSuccess: 'ออกจากระบบ Admin เรียบร้อยแล้ว',
-                locationCount: 'สถานที่', searchPlaceholder: 'ค้นหาชื่อตึก, แผนกวิชา, เช่น ช่างยนต์, บัญชี, คาเฟ่...', noSearch: 'ไม่พบสถานที่ที่ค้นหา', noLocation: 'ไม่พบข้อมูลสถานที่',
-                categoryBuilding: 'อาคารเรียน/ปฏิบัติการ', categoryActivity: 'ลานกิจกรรม/กีฬา',
-                categoryCanteen: 'อาหาร/บริการ', categorySacred: 'สิ่งศักดิ์สิทธิ์', categoryOther: 'ทั่วไป',
-                floorDetails: 'รายละเอียดประจำชั้น / โซน', expandImage: 'ขยายรูป', noImage: 'ยังไม่มีรูปภาพประจำชั้น',
-                noFloor: 'ไม่มีข้อมูลชั้น', noDescription: 'ไม่มีข้อมูลรายละเอียด', imageTitle: 'รูปภาพประกอบ',
-                addLocationTitle: 'เพิ่มข้อมูลสถานที่', editLocationTitle: 'แก้ไขข้อมูลสถานที่'
-            },
-            en: {
-                modeUser: 'General User', modeAdmin: 'Administrator',
-                btnRoomLogic: 'How to Read Room Codes', btnHowToImage: 'How to Add Floor/Building Images',
-                catAll: 'All', catBuilding: 'Academic / Workshop Buildings', catActivity: 'Activity / Sports Areas',
-                catCanteen: 'Food / Services', catSacred: 'Sacred Places',
-                addressText: 'Rojana Rd., Phai Ling, Phra Nakhon Si Ayutthaya',
-                mapTitle: 'Campus Map (Interactive ATCC Campus Layout)',
-                mapSubtitle: 'Click a pin or building to view details',
-                guideLabel: 'Tip:',
-                mapGuideText: 'Click a pin or building on the map to view classroom information, floor details, and images.',
-                noLocationSelected: 'Select a building or place on the map<br>to view departments, details, and floor images.',
-                allLocations: 'All Locations',
-                adminHeaderTitle: 'Location Management & Map Pin Positioning',
-                adminHeaderDesc: 'Add, edit, delete locations, and click the campus map to adjust pin positions.',
-                btnAddLocation: 'Add Location', btnBakeData: 'Bake Data into Code',
-                btnBackup: 'Backup (Export)', btnImport: 'Import Data', btnReset: 'Reset Data',
-                btnLogout: 'Logout Admin', adminMapHeader: 'Pin Position Tool (click the map to select X/Y coordinates)',
-                adminMapStatusDefault: 'Select an item in the table, then click the map to move its pin.',
-                adminTableTitle: 'Building / Location Management', colCategory: 'Category', colTitle: 'Building / Location',
-                colFloors: 'Floors / Zones', colCoords: 'Coordinates (X%, Y%)', colManage: 'Actions',
-                adminAuthTitle: 'Administrator Authentication', adminAuthDesc: 'Enter the password to access the management system.',
-                adminPasswordLabel: 'Administrator Password', adminPasswordPlaceholder: 'Enter password',
-                adminCancel: 'Cancel', adminLogin: 'Log In', loginSuccess: 'Admin login successful',
-                loginFail: 'Incorrect password', logoutSuccess: 'Admin logged out successfully',
-                locationCount: 'locations', searchPlaceholder: 'Search buildings, departments, e.g. automotive, accounting, cafe...', noSearch: 'No locations found', noLocation: 'Location not found',
-                categoryBuilding: 'Academic / Workshop', categoryActivity: 'Activity / Sports',
-                categoryCanteen: 'Food / Services', categorySacred: 'Sacred Place', categoryOther: 'Other',
-                floorDetails: 'Floor / Zone Details', expandImage: 'Expand Image', noImage: 'No floor image available',
-                noFloor: 'No floor information', noDescription: 'No description available', imageTitle: 'Image',
-                addLocationTitle: 'Add Location', editLocationTitle: 'Edit Location'
-            }
-        };
+const translations = {
+  th: {
+    title: "ระบบแผนผังอาคาร",
+    room101: {
+      name: "ห้อง 101: ห้องประชุมใหญ่",
+      desc: "ห้องประชุมขนาดใหญ่ รองรับได้ 50 คน พร้อมอุปกรณ์มัลติมีเดียครบครัน"
+    }
+  },
+  en: {
+    title: "Building Floor Plan System",
+    room101: {
+      name: "Room 101: Main Conference Room",
+      desc: "Large conference room capacity 50 people with full multimedia equipment."
+    }
+  }
+};
 
-        function t(key, fallback = '') {
-            return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || fallback || key;
+function changeLanguage(lang) {
+  document.getElementById('site-title').innerText = translations[lang].title;
+  document.getElementById('room-name').innerText = translations[lang].room101.name;
+  document.getElementById('room-desc').innerText = translations[lang].room101.desc;
+}
+
+function setLang(lang) {
+      if (typeof currentLang !== 'undefined') {
+        currentLang = lang;
+        if (typeof updateLanguageUI === 'function') updateLanguageUI();
+        if (typeof renderLocations === 'function') renderLocations();
+      } else {
+        alert('เปลี่ยนภาษาเป็น: ' + lang.toUpperCase());
+      }
+    }
+
+    function openAdminLoginModal() {
+      const modal = document.getElementById('location-modal') || document.getElementById('admin-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+      } else {
+        const pass = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Password):");
+        if (pass === "Atcc.22") {
+          alert("เข้าสู่ระบบสำเร็จ!");
+        } else if (pass !== null) {
+          alert("รหัสผ่านไม่ถูกต้อง");
         }
-
-        function setLanguage(lang) {
-            if (!TRANSLATIONS[lang]) return;
-            currentLang = lang;
-            localStorage.setItem('atcc_language', lang);
-            document.documentElement.lang = lang;
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (TRANSLATIONS[lang][key] !== undefined) el.innerHTML = TRANSLATIONS[lang][key];
-            });
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                if (TRANSLATIONS[lang][key] !== undefined) el.placeholder = TRANSLATIONS[lang][key];
-            });
-
-            const th = document.getElementById('lang-th-btn');
-            const en = document.getElementById('lang-en-btn');
-            if (th && en) {
-                th.className = lang === 'th'
-                    ? 'px-2.5 py-1 rounded-lg font-bold transition-all duration-200 bg-amber-400 text-blue-950 shadow'
-                    : 'px-2.5 py-1 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white';
-                en.className = lang === 'en'
-                    ? 'px-2.5 py-1 rounded-lg font-bold transition-all duration-200 bg-amber-400 text-blue-950 shadow'
-                    : 'px-2.5 py-1 rounded-lg font-semibold transition-all duration-200 text-blue-200 hover:text-white';
-            }
-
-            // Re-render dynamic areas so their labels follow the selected language.
-            if (typeof renderLocationList === 'function') renderLocationList();
-            if (typeof renderLocationDetailCard === 'function' && currentSelectedId) renderLocationDetailCard(currentSelectedId);
-            if (typeof renderAdminTable === 'function') renderAdminTable();
-            if (typeof renderAdminPins === 'function' && currentMode === 'admin') renderAdminPins();
-            updateModalLanguage();
-        }
-
-        function updateModalLanguage() {
-            const modalTitle = document.getElementById('modal-title');
-            if (modalTitle) {
-                const titleSpan = modalTitle.querySelector('span');
-                if (titleSpan) titleSpan.textContent = document.getElementById('form-id')?.value ? t('editLocationTitle') : t('addLocationTitle');
-            }
-            const authTitle = document.querySelector('#admin-auth-modal [data-i18n="adminAuthTitle"]');
-            if (authTitle) authTitle.textContent = t('adminAuthTitle');
-            const authDesc = document.querySelector('#admin-auth-modal [data-i18n="adminAuthDesc"]');
-            if (authDesc) authDesc.textContent = t('adminAuthDesc');
-            const pwLabel = document.querySelector('#admin-auth-modal [data-i18n="adminPasswordLabel"]');
-            if (pwLabel) pwLabel.textContent = t('adminPasswordLabel');
-            const pw = document.getElementById('admin-password-input');
-            if (pw) pw.placeholder = t('adminPasswordPlaceholder');
-            const cancel = document.querySelector('#admin-auth-modal [data-i18n="adminCancel"]');
-            if (cancel) cancel.textContent = t('adminCancel');
-            const login = document.querySelector('#admin-auth-modal [data-i18n="adminLogin"]');
-            if (login) login.textContent = t('adminLogin');
-        }
-
-        function requestAdminAccess() {
-            const modal = document.getElementById('admin-auth-modal');
-            const input = document.getElementById('admin-password-input');
-            const error = document.getElementById('admin-login-error');
-            if (!modal) return;
-            if (input) input.value = '';
-            if (error) error.classList.add('hidden');
-            modal.classList.remove('hidden');
-            setTimeout(() => input && input.focus(), 50);
-        }
-
-        function closeAdminAuthModal() {
-            const modal = document.getElementById('admin-auth-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function submitAdminAuth(event) {
-            event.preventDefault();
-            const input = document.getElementById('admin-password-input');
-            const error = document.getElementById('admin-login-error');
-            if (input && input.value === ADMIN_PASSWORD) {
-                closeAdminAuthModal();
-                switchMode('admin');
-                showToast(t('loginSuccess'));
-            } else {
-                if (error) {
-                    error.textContent = t('loginFail');
-                    error.classList.remove('hidden');
-                }
-                if (input) { input.select(); input.focus(); }
-            }
-        }
-
-        // Keep the existing application initialization, then apply the saved language.
-        const originalInitApp = initApp;
-        initApp = function() {
-            originalInitApp();
-            setLanguage(currentLang);
-        };
+      }
+    }
   </script>
 
+  <!-- ปุ่มสลับภาษาและ Admin ลอยด้านขวาบน -->
+  <div style="position: fixed; top: 12px; right: 12px; z-index: 9999; display: flex; gap: 6px; align-items: center; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+    <button onclick="setLang('th')" style="padding: 4px 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🇹🇭 TH</button>
+    <button onclick="setLang('en')" style="padding: 4px 8px; background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🇬🇧 EN</button>
+    <button onclick="openAdminLoginModal()" style="padding: 5px 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">🔑 ผู้ดูแลระบบ</button>
+  </div>
 </body>
 </html>
