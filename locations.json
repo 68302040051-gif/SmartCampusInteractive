@@ -1,0 +1,135 @@
+[
+  {
+    "id": "san-phra-phrum",
+    "name": "พระภูมิ/พระวิษณุ",
+    "description": "สถานที่สักการะบูชาสิ่งศักดิ์สิทธิ์",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/4KzF2Qn9/Image-25690820-154347-446.jpg"
+  },
+  {
+    "id": "dome",
+    "name": "ลานอเนกประสงค์ ATCC",
+    "description": "ลานอเนกประสงค์/สนามกีฬากลางแจ้ง",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/VSyVFVsj/Image-25690820-152224-524.jpg"
+  },
+  {
+    "id": "1",
+    "name": "อาคาร1",
+    "description": "ตึกอำนวยการ",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/2q4X9734/Image-25690820-161518-342.jpg"
+  },
+  {
+    "id": "2-1",
+    "name": "อาคาร2-ชั้น1",
+    "description": "ห้องทูบี/โถง",
+    "zone": "โซนการเรียน/บริหาร",
+    "image": "https://i.postimg.cc/xkr4P4jv/Image-25690820-152611-048.jpg"
+  },
+  {
+    "id": "2-2",
+    "name": "อาคาร2-ชั้น2",
+    "description": "ห้องสัมมนา",
+    "zone": "โซนการเรียน/บริหาร",
+    "image": "https://i.postimg.cc/f34rvrWL/Image-25690820-151137-164.jpg"
+  },
+  {
+    "id": "2-3",
+    "name": "อาคาร2-ชั้น3",
+    "description": "คอมพิวเตอร์ธุรกิจดิจิทัลและเทคโนโลยีสารสนเทศ",
+    "zone": "โซนการเรียน/บริหาร",
+    "image": "https://i.postimg.cc/06gBCB5N/Image-25690820-151137-232.jpg"
+  },
+  {
+    "id": "2-4",
+    "name": "อาคาร2-ชั้น4",
+    "description": "แผนกภาษาต่างประเทศ",
+    "zone": "โซนการเรียน/บริหาร",
+    "image": "https://i.postimg.cc/LqdbVb4L/Image-25690820-152224-688.jpg"
+  },
+  {
+    "id": "2-5",
+    "name": "อาคาร2-ชั้น5",
+    "description": "หอประชุมใหญ่",
+    "zone": "โซนกิจกรรม",
+    "image": "https://i.postimg.cc/TyrHNJhV/Image-25690823-220534-142.jpg"
+  },
+  {
+    "id": "3",
+    "name": "อาคาร3",
+    "description": "อาคารอำนวยการ",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/d7Mx9xQh/Gemini-Generated-Image.png"
+  },
+  {
+    "id": "4",
+    "name": "อาคาร4",
+    "description": "ห้องพัสดุ/ห้องพยาบาล",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/hGhRckHZ/Image-25690820-152224-866.jpg"
+  },
+  {
+    "id": "ATCC Canteen",
+    "name": "โรงอาหาร",
+    "description": "โรงอาหาร",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/SX0vGvQM/Image-25690820-152224-204.jpg"
+  },
+  {
+    "id": "5-1",
+    "name": "อาคาร5-ชั้น1",
+    "description": "ช่างกลโรงงาน",
+    "zone": "โซน 2",
+    "image": "https://i.postimg.cc/67smhm6p/Image-25690820-151137-197.jpg"
+  },
+  {
+    "id": "5-2",
+    "name": "อาคาร5-ชั้น2",
+    "description": "ช่างไฟฟ้า",
+    "zone": "โซน 2",
+    "image": "https://i.postimg.cc/cKqbcb1K/Image-25690820-152224-091.jpg"
+  },
+  {
+    "id": "6-1",
+    "name": "อาคาร6-ชั้น1",
+    "description": "ห้องสมุด",
+    "zone": "โซน 4",
+    "image": "https://i.postimg.cc/67smhm62/Image-25690820-152224-142.jpg"
+  },
+  {
+    "id": "6-2",
+    "name": "อาคาร6-ชั้น2",
+    "description": "สุขศึกษา/พลศึกษา",
+    "zone": "โซน 4",
+    "image": "https://i.postimg.cc/2q4X973W/Image-25690820-153147-578.jpg"
+  },
+  {
+    "id": "6-3",
+    "name": "อาคาร6-ชั้น3",
+    "description": "แผนกการตลาด",
+    "zone": "โซน 4",
+    "image": "https://i.postimg.cc/f3xgqfkJ/Image-25690820-153147-417.jpg"
+  },
+  {
+    "id": "6-4",
+    "name": "อาคาร6-ชั้น4",
+    "description": "แผนกการบัญชี",
+    "zone": "โซน 4",
+    "image": "https://i.postimg.cc/cKQ5kB6v/Image-25690820-153147-454.jpg"
+  },
+  {
+    "id": "7",
+    "name": "อาคาร7",
+    "description": "ช่างยนต์และยานยนต์ไฟฟ้า",
+    "zone": "โซน 3",
+    "image": "https://i.postimg.cc/Mcyr3mX1/Image-25690820-161522-596.jpg"
+  },
+  {
+    "id": "8",
+    "name": "อาคาร8",
+    "description": "ปิดให้บริการแล้ว",
+    "zone": "โซน 1",
+    "image": "https://i.postimg.cc/Ty84c42d/Gemini-Generated-Image-(1).png"
+  }
+]
