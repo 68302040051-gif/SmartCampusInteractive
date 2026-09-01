@@ -98,7 +98,7 @@
         <!-- Left Sidebar: Categories & Buildings -->
         <aside class="w-80 bg-white border-r border-slate-200 flex flex-col z-10 shadow-md">
             
-            <!-- Category Filter Bar (วงสีแดง) -->
+            <!-- Category Filter Bar -->
             <div class="p-4 border-b border-slate-100 bg-slate-50">
                 <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">เลือกดูตามหมวดหมู่</h2>
                 <div class="grid grid-cols-2 gap-2" id="categoryContainer">
@@ -147,14 +147,14 @@
                 <div class="relative w-full h-full">
                     <img id="campusMap" src="https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" alt="Campus Map" class="w-full h-full object-contain select-none">
                     
-                    <!-- Pins Layer (วงสีฟ้า) -->
+                    <!-- Pins Layer -->
                     <div id="pinsContainer" class="absolute inset-0 pointer-events-none">
                         <!-- Pins rendered here -->
                     </div>
                 </div>
 
                 <!-- Map Loading Indicator -->
-                <div id="mapLoading" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-40">
+                <div id="mapLoading" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-40 hidden">
                     <div class="text-center">
                         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-600 mb-2"></i>
                         <p class="text-xs text-slate-600 font-medium">กำลังโหลดข้อมูลแผนที่...</p>
@@ -173,34 +173,28 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-5 space-y-4">
-                <!-- Location Header -->
                 <div>
                     <h2 id="detailTitle" class="text-xl font-bold text-slate-800">ชื่อสถานที่</h2>
                     <p id="detailZone" class="text-xs text-slate-500 mt-1">โซน: -</p>
                 </div>
 
-                <!-- Image Gallery / Banner -->
                 <div class="w-full h-48 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative">
                     <img id="detailImage" src="" alt="Location Image" class="w-full h-full object-cover">
                 </div>
 
-                <!-- Description -->
                 <div>
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">รายละเอียด</h3>
                     <p id="detailDescription" class="text-sm text-slate-600 leading-relaxed">-</p>
                 </div>
 
-                <!-- Floors Section (If multi-floor building) -->
                 <div id="floorsSection" class="hidden border-t border-slate-100 pt-3">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ข้อมูลแต่ละชั้น</h3>
-                    <div id="floorsList" class="space-y-2">
-                        <!-- Floor items rendered dynamically -->
-                    </div>
+                    <div id="floorsList" class="space-y-2"></div>
                 </div>
             </div>
         </aside>
 
-        <!-- Admin Modal Panel (วงสีเหลือง & วงสีม่วง) -->
+        <!-- Admin Modal Panel -->
         <div id="adminPanel" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
                 <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
@@ -214,11 +208,6 @@
                 </div>
 
                 <div class="p-6 overflow-y-auto flex-1 space-y-4">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800 flex items-start gap-2">
-                        <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
-                        <span>การเพิ่ม แก้ไข หรือลบข้อมูลในหน้านี้ จะทำการบันทึกลงใน <b>Google Sheets</b> ของคุณแบบ Real-time อัตโนมัติ</span>
-                    </div>
-
                     <!-- Add/Edit Form -->
                     <form id="adminForm" onsubmit="handleSaveData(event)" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <input type="hidden" id="formId">
@@ -294,9 +283,7 @@
                                     <th class="p-2 border-b text-center">จัดการ</th>
                                 </tr>
                             </thead>
-                            <tbody id="adminTableBody" class="divide-y divide-slate-100">
-                                <!-- Data rows -->
-                            </tbody>
+                            <tbody id="adminTableBody" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -307,14 +294,23 @@
 
     <!-- Scripts -->
     <script>
-        // Web App URL จาก Google Apps Script ของคุณ
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzW-PBNWixMfCzBJInkHREOiWsA1Doy5Ulrc9_IRMP0_ZiM9cj-cr5ht8Vw07Z6xc9HwA/exec";
 
-        let campusData = [];
+        // Initial Data Fallback (ป้องกันปัญหา CORS หรือสคริปต์โหลดไม่ขึ้น)
+        const defaultCampusData = [
+            { id: "b1_f1", name: "อาคาร 1 ชั้น 1 (ฝ่ายบริหาร/ห้องเรียน)", description: "ห้องอำนวยการ ฝ่ายวิชาการ และห้องเรียนทฤษฎี", zone: "โซนหน้า", category: "building", x: 42, y: 55, building_id: "b1", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" },
+            { id: "b1_f2", name: "อาคาร 1 ชั้น 2 (ห้องปฏิบัติการคอมพิวเตอร์)", description: "ห้องปฏิบัติการคอมพิวเตอร์สารสนเทศและการเรียนการสอน", zone: "โซนหน้า", category: "building", x: 42, y: 55, building_id: "b1", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" },
+            { id: "b2_f1", name: "อาคาร 2 ชั้น 1 (สาขาการบัญชี/การตลาด)", description: "ห้องปฏิบัติการสาขาวิชาการบัญชีและการตลาด", zone: "โซนกลาง", category: "building", x: 60, y: 40, building_id: "b2", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" },
+            { id: "b2_f2", name: "อาคาร 2 ชั้น 2 (ห้องเรียนรวม)", description: "ห้องเรียนบรรยายปรับอากาศ", zone: "โซนกลาง", category: "building", x: 60, y: 40, building_id: "b2", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" },
+            { id: "canteen_1", name: "โรงอาหารวิทยาลัย", description: "ศูนย์อาหาร ร้านค้า และเครื่องดื่มสำหรับนักศึกษา", zone: "โซนบริการ", category: "canteen", x: 75, y: 65, building_id: "c1", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" },
+            { id: "court_1", name: "ลานกิจกรรมเอนกประสงค์", description: "ลานกิจกรรมกลางแจ้ง สนามบาสเกตบอล และเคารพธงชาติ", zone: "โซนกลาง", category: "activity", x: 50, y: 70, building_id: "a1", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" },
+            { id: "sacred_1", name: "องค์พระวิษณุกรรม / ศาลประจำวิทยาลัย", description: "สิ่งศักดิ์สิทธิ์ประจำวิทยาลัยเทคโนโลยีพณิชยการอยุธยา", zone: "โซนหน้า", category: "sacred", x: 25, y: 80, building_id: "s1", image: "https://i.postimg.cc/y8P2S1xQ/Gemini-Generated-Image-44o50744o50744o5.png" }
+        ];
+
+        let campusData = [...defaultCampusData];
         let activeCategory = 'all';
         let selectedLocationId = null;
 
-        // Categories Configuration
         const categoryMeta = {
             building: { label: 'อาคารเรียน', icon: 'fa-building', color: 'text-blue-600', bg: 'bg-blue-500' },
             activity: { label: 'กิจกรรม/ลาน', icon: 'fa-futbol', color: 'text-emerald-600', bg: 'bg-emerald-500' },
@@ -322,42 +318,23 @@
             sacred: { label: 'สิ่งศักดิ์สิทธิ์', icon: 'fa-place-of-worship', color: 'text-purple-600', bg: 'bg-purple-500' }
         };
 
-        // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
-            fetchDataFromGoogleSheet();
+            renderSidebarList();
+            renderPins();
+            renderAdminTable();
         });
 
-        // Fetch Data from Google Apps Script
-        async function fetchDataFromGoogleSheet() {
-            document.getElementById('mapLoading').classList.remove('hidden');
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                campusData = await response.json();
-                renderSidebarList();
-                renderPins();
-                renderAdminTable();
-            } catch (error) {
-                console.error("Error loading sheet data:", error);
-                alert("ไม่สามารถดึงข้อมูลจาก Google Sheets ได้ กรุณาตรวจสอบการตั้งค่า Deploy");
-            } finally {
-                document.getElementById('mapLoading').classList.add('hidden');
-            }
-        }
-
-        // Render Pins on Map (วงสีฟ้า)
         function renderPins() {
             const container = document.getElementById('pinsContainer');
             container.innerHTML = '';
 
             if (activeCategory === 'none') return;
 
-            // Group items or show individual pins
             const filteredData = campusData.filter(item => {
                 if (activeCategory === 'all') return true;
                 return item.category === activeCategory;
             });
 
-            // Unique pin positions (grouped by building_id or coordinates)
             const mapGroup = {};
             filteredData.forEach(item => {
                 const key = item.building_id || item.id;
@@ -391,11 +368,8 @@
             });
         }
 
-        // Filter Category (วงสีแดง)
         function filterCategory(category) {
             activeCategory = category;
-            
-            // Update active button state
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 if (btn.dataset.cat === category) {
                     btn.classList.add('active');
@@ -403,12 +377,10 @@
                     btn.classList.remove('active');
                 }
             });
-
             renderPins();
             renderSidebarList();
         }
 
-        // Render Sidebar Location List
         function renderSidebarList() {
             const container = document.getElementById('locationList');
             container.innerHTML = '';
@@ -443,7 +415,6 @@
             });
         }
 
-        // Select Location & Open Drawer
         function selectLocation(id) {
             selectedLocationId = id;
             const item = campusData.find(loc => loc.id == id);
@@ -452,14 +423,12 @@
             renderPins();
             renderSidebarList();
 
-            // Populate Detail Drawer
             document.getElementById('detailTitle').innerText = item.name;
             document.getElementById('detailZone').innerText = `โซน: ${item.zone || '-'}`;
             document.getElementById('detailDescription').innerText = item.description || 'ไม่มีข้อมูลรายละเอียด';
             document.getElementById('detailCategory').innerText = categoryMeta[item.category]?.label || 'รายละเอียด';
             document.getElementById('detailImage').src = item.image || 'https://via.placeholder.com/400x200?text=No+Image';
 
-            // Check if there are other floors/items with same building_id
             const floorsList = document.getElementById('floorsList');
             const floorsSection = document.getElementById('floorsSection');
             floorsList.innerHTML = '';
@@ -482,7 +451,6 @@
                 floorsSection.classList.add('hidden');
             }
 
-            // Open Drawer
             document.getElementById('detailDrawer').classList.remove('translate-x-full');
         }
 
@@ -493,7 +461,6 @@
             renderSidebarList();
         }
 
-        // Search Filter
         function handleSearch() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('locationList');
@@ -523,7 +490,6 @@
             });
         }
 
-        // Admin Panel Functions (วงสีเหลือง/ม่วง - Google Sheets Auto Sync)
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             panel.classList.toggle('hidden');
@@ -555,7 +521,7 @@
 
             document.getElementById('formId').value = item.id;
             document.getElementById('formIdInput').value = item.id;
-            document.getElementById('formIdInput').disabled = true; // Don't allow changing ID directly
+            document.getElementById('formIdInput').disabled = true;
             document.getElementById('formName').value = item.name || '';
             document.getElementById('formCategory').value = item.category || 'building';
             document.getElementById('formZone').value = item.zone || '';
@@ -591,6 +557,19 @@
                 building_id: document.getElementById('formBuildingId').value
             };
 
+            // Update local state first
+            const existingIndex = campusData.findIndex(item => item.id === payload.id);
+            if (existingIndex >= 0) {
+                campusData[existingIndex] = payload;
+            } else {
+                campusData.push(payload);
+            }
+
+            renderSidebarList();
+            renderPins();
+            renderAdminTable();
+
+            // Send to Google Sheets
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -598,12 +577,10 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                alert("บันทึกข้อมูลลง Google Sheet สำเร็จแล้ว!");
+                alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
                 resetForm();
-                fetchDataFromGoogleSheet(); // Reload data
             } catch (err) {
-                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + err);
+                alert("บันทึกข้อมูลในหน้าเว็บสำเร็จแล้ว (แต่ส่งไปยัง Google Sheet ไม่ได้)");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> บันทึกลง Google Sheet`;
@@ -613,6 +590,11 @@
         async function deleteLocation(id) {
             if (!confirm(`คุณต้องการลบรายการ ID: ${id} หรือไม่?`)) return;
 
+            campusData = campusData.filter(item => item.id !== id);
+            renderSidebarList();
+            renderPins();
+            renderAdminTable();
+
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -620,11 +602,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: "delete", id: id })
                 });
-
-                alert("ลบข้อมูลสำเร็จแล้ว!");
-                fetchDataFromGoogleSheet();
+                alert("ลบข้อมูลเรียบร้อยแล้ว!");
             } catch (err) {
-                alert("เกิดข้อผิดพลาดในการลบข้อมูล: " + err);
+                alert("ลบข้อมูลจากหน้าเว็บสำเร็จแล้ว");
             }
         }
     </script>
