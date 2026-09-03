@@ -6,6 +6,13 @@
     <title>Smart Campus Interactive - วิทยาลัยเทคโนโลยีพณิชยการอยุธยา</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase SDK & Config -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://yscgerginjspnjnvegos.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_mq1vpqU8wBx1VFeQwYDwGA_NNDDs..."; // ใส่ Key ให้ครบ
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts: Kanit -->
@@ -595,7 +602,7 @@ const DEFAULT_CAMPUS_DATA = [
   {
     id: 'dome',
     title: 'เอนกประสงค์ ATCC',
-    category: 'facility',
+    category: 'activity',
     color: 'bg-blue-600',
     x: 40,
     y: 52,
@@ -700,7 +707,7 @@ const DEFAULT_CAMPUS_DATA = [
   {
     id: 'canteen',
     title: 'โรงอาหาร',
-    category: 'facility',
+    category: 'canteen',
     color: 'bg-blue-900',
     x: 21,
     y: 56,
@@ -1499,11 +1506,20 @@ const DEFAULT_CAMPUS_DATA = [
         }
 
         // Keep the existing application initialization, then apply the saved language.
-        const originalInitApp = initApp;
-        initApp = function() {
-            originalInitApp();
-            setLanguage(currentLang);
-        };
+        async function loadFromSupabase() {
+    try {
+        const { data, error } = await supabase.from('locations').select('*');
+        if (!error && data && data.length > 0) {
+            campusData = data;
+        }
+    } catch (e) {
+        console.log("Using default local data");
+    }
+    initApp();
+    setLanguage(currentLang);
+}
+
+loadFromSupabase();
   </script>
 
 </body>
